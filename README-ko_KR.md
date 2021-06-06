@@ -38,7 +38,7 @@ TypeORM은 [Active Record](./docs/active-record-data-mapper.md#what-is-the-activ
 * 리포지토리 및 사용자 지정 리포지토리
 * 깨끗한 객체 관계형 모델
 * 연관 (관계)
-* eager and lazy 관계
+* eager 와 lazy 관계
 * 단방향, 양방향 및 자기 참조 관계
 * 다중 상속 패턴 지원
 * 캐스케이드
@@ -51,7 +51,7 @@ TypeORM은 [Active Record](./docs/active-record-data-mapper.md#what-is-the-activ
 * 여러 데이타베이스 타입과 동작
 * 교차 데이터베이스 및 교차 스키마 쿼리
 * 우아한 구문, 유연하고 강력한 QueryBuilder
-* 레프트와 이너 조인
+* 레프트 조인과 이너 조인
 * 조인을 사용하는 쿼리에 대한 적절한 페이지 매김
 * 쿼리 캐싱
 * 원시 결과 스트리밍
@@ -230,7 +230,7 @@ await timber.remove();
 
 ## 시작하기
 
-TypeORM을 시작하는 가장 빠른 방법은 CLI 명령을 사용하여 시작 프로젝트를 생성하는 것입니다. 빠른 시작은 NodeJS 애플리케이션에서 TypeORM을 사용하는 경우에만 작동합니다. 다른 플랫폼을 사용하는 경우 [단계별 가이드](#step-by-step-guide)로 진행하세요.
+TypeORM을 시작하는 가장 빠른 방법은 CLI 명령을 사용하여 시작 프로젝트를 생성하는 것입니다. 빠른 시작은 NodeJS 애플리케이션에서 TypeORM을 사용하는 경우에만 작동합니다. 다른 플랫폼을 사용하는 경우 [단계별 가이드](#단계별-가이드)로 진행하세요.
 
 먼저 TypeORM을 전역으로 설치하십시오.
 
@@ -524,7 +524,7 @@ createConnection({
 
 `synchronize`를 설정하면 애플리케이션을 실행할 때마다 엔티티가 데이터베이스와 동기화됩니다.
 
-### 디렉토리에서 모든 엔티티로드
+### 디렉토리에서 모든 엔티티 로드
 
 나중에 더 많은 엔터티를 만들 때 구성의 엔터티에 추가해야합니다. 이것은 그다지 편리하지 않으므로 대신 모든 엔티티가 연결되고 연결에 사용되는 전체 디렉토리를 설정할 수 있습니다.
 
@@ -935,7 +935,7 @@ export class Photo {
 }
 ```
 
-`캐스케이드`를 사용하면 사진을 별도로 저장하지 않고 메타데이터 객체를 별도로 저장할 수 있습니다. 이제 사진 객체를 간단히 저장할 수 있으며 계단식 옵션으로 인해 메타데이터 객체가 자동으로 저장됩니다.
+`cascade`를 사용하면 사진을 별도로 저장하지 않고 메타데이터 객체를 별도로 저장할 수 있습니다. 이제 사진 객체를 간단히 저장할 수 있으며 계단식 옵션으로 인해 메타데이터 객체가 자동으로 저장됩니다.
 
 ```typescript
 createConnection(options).then(async connection => {
@@ -972,7 +972,7 @@ createConnection(options).then(async connection => {
 
 ### 다대일 / 일대다 관계 생성
 
-다대일/일대다 관계를 만들어 보겠습니다. 사진에 한명의 작성자가 있고 각 작성자가 여러장의 사진을 가질 수 있다고 가정해 보겠습니다. 먼저 `Author` 클래스를 만들어 보겠습니다.
+다대일 / 일대다 관계를 만들어 보겠습니다. 사진에 한명의 작성자가 있고 각 작성자가 여러장의 사진을 가질 수 있다고 가정해 보겠습니다. 먼저 `Author` 클래스를 만들어 보겠습니다.
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from "typeorm";
@@ -1011,7 +1011,7 @@ export class Photo {
 }
 ```
 
-다대일/일대다 관계에서 소유자 측은 항상 다대일입니다. 이는 `@ManyToOne`을 사용하는 클래스가 관련 객체의 id를 저장한다는 의미입니다.
+다대일 / 일대다 관계에서 소유자 측은 항상 다대일입니다. 이는 `@ManyToOne`을 사용하는 클래스가 관련 객체의 id를 저장한다는 의미입니다.
 
 애플리케이션을 실행하면 ORM이 `author` 테이블을 생성합니다.
 
@@ -1042,7 +1042,7 @@ export class Photo {
 
 ### 다대다 관계 생성
 
-다대일/다대다 관계를 만들어 봅시다. 사진이 여러 앨범에 있을 수 있고 각 앨범에 여러 사진이 포함될 수 있다고 가정해 보겠습니다. `Album` 클래스를 만들어 보겠습니다.
+다대일 / 다대다 관계를 만들어 봅시다. 사진이 여러 앨범에 있을 수 있고 각 앨범에 여러 사진이 포함될 수 있다고 가정해 보겠습니다. `Album` 클래스를 만들어 보겠습니다.
 
 ```typescript
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
