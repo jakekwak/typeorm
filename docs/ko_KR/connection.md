@@ -1,16 +1,15 @@
-# 커넥션 작업하기
+# Connection과 작업하기
 
-- [커넥션 작업하기](#커넥션-작업하기)
-  - [What is `Connection`](#what-is-connection)
-  - [Creating a new connection](#creating-a-new-connection)
-  - [Using `ConnectionManager`](#using-connectionmanager)
-  - [Working with connection](#working-with-connection)
+- ['커넥션'이란?](#커넥션이란)
+- [새로운 커넥션 생성](#새로운-커넥션-생성)
+- [`ConnectionManager` 사용하기](#connectionmanager-사용하기)
+- [커넥션과 작업하기](#커넥션과-작업하기)
 
-## What is `Connection`
+## '커넥션'이란?
 
 데이터베이스와의 상호작용은 연결을 설정한 후에 만 가능합니다. TypeORM의 `Connection`은 보이는 것처럼 데이터베이스 연결을 설정하지 않고 대신 연결 풀을 설정합니다. 실제 데이터베이스 연결에 관심이 있다면 `QueryRunner` 문서를 참조하십시오. `QueryRunner`의 각 인스턴스는 별도의 격리된 데이터베이스 연결입니다. Connection Pool 설정은 `Connection`의 `connect`메소드가 호출되면 설정됩니다. `createConnection` 함수를 사용하여 연결을 설정하면 `connect` 메소드가 자동으로 호출됩니다. 연결해제 (풀의 모든 연결 닫기)는 `close`가 호출 될 때 이루어집니다. 일반적으로 애플리케이션 부트스트랩에서 연결을 한 번만 생성하고 데이터베이스 작업을 완전히 마친 후에 연결을 닫아야합니다. 실제로 사이트에 대한 백엔드를 구축하고 백엔드 서버가 항상 실행중인 경우 연결을 닫지 않습니다.
 
-## Creating a new connection
+## 새로운 커넥션 생성
 
 연결을 만드는 방법에는 여러 가지가 있습니다. 가장 간단하고 일반적인 방법은 `createConnection` 및 `createConnections` 함수를 사용하는 것입니다.
 
@@ -98,7 +97,7 @@ const secondConnection = getConnection("test2-connection");
 연결을 저장하고 관리하기 위해 추가 클래스 / 서비스를 생성하지 마십시오. 이 기능은 이미 TypeORM에 포함되어 있습니다.
 불필요한 추상화를 과도하게 설계하고 만들 필요가 없습니다.
 
-## Using `ConnectionManager`
+## `ConnectionManager` 사용하기
 
 `ConnectionManager`클래스를 사용하여 연결을 생성할 수 있습니다. 예를 들면:
 
@@ -138,7 +137,7 @@ await connection.connect(); // 연결을 수행
 
 일반적으로 이 방법을 피하고 애플리케이션에서 불필요한 복잡함을 피하고, 정말로 필요하다고 생각하는 경우에만 `ConnectionManager`를 사용하십시오.
 
-## Working with connection
+## 커넥션과 작업하기
 
 연결을 설정하면 `getConnection` 함수를 사용하여 앱의 어느 곳에서나 사용할 수 있습니다.
 
