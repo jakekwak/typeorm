@@ -1,18 +1,14 @@
-# Roadmap
+# 로드맵
 
-See what amazing new features we are expecting to land in the next TypeORM versions.
+다음 TypeORM 버전에 어떤 놀라운 새로운 기능이 추가될 것으로 기대하는지 확인하십시오.
 
-## Note on 1.0.0 release
+## 1.0.0 릴리스에 대한 참고사항
 
-We are planning to release a final stable `1.0.0` version in near future.
-However, TypeORM is already actively used in a number of big production systems.
-The main API is already very stable.
-TypeORM follows a semantic versioning and until `1.0.0`, breaking changes may appear in `0.x.x` versions.
-However, since the API is already quite stable we don't expect too many breaking changes.
+조만간 최종 안정화 버전 `1.0.0`을 출시할 계획입니다. 그러나 TypeORM은 이미 많은 대규모 생산 시스템에서 활발히 사용되고 있습니다. 메인 API는 이미 매우 안정적입니다. TypeORM은 시맨틱 버전 관리를 따르며 `1.0.0`까지 `0.x.x` 버전에 주요 변경 사항이 나타날 수 있습니다. 그러나 API는 이미 상당히 안정적이므로 너무 많은 주요 변경 사항을 기대하지 않습니다.
 
-## How to install latest development version?
+## 최신 개발 버전을 설치하는 방법은 무엇입니까?
 
-To install latest development version use the following command:
+최신 개발 버전을 설치하려면 다음 명령을 사용하십시오.
 
 ```
 npm i typeorm@next
@@ -20,30 +16,30 @@ npm i typeorm@next
 
 ## 0.3.0
 
-- [ ] research `@Select` and `@Where` decorators
-- [ ] add `addSelectAndMap` functionality to `QueryBuilder`
-- [ ] research internationalization features
-- [ ] research ability to create one-to-many relations without inverse sides
-- [ ] research ability to create a single relation with multiple entities at once
-- [ ] more tree repository functionality
-- [ ] cli: create database backup command
-- [ ] extend `query` method functionality
-- [ ] better internal ORM logging
-- [ ] better error handling and user-friendly messages
-- [ ] better JavaScript support - more docs and test coverage
-- [ ] research NativeScript support
-- [ ] finish naming strategy implementation
-- [ ] implement soft deletion
+- [ ] `@Select` 및 `@Where` 데코레이터 조사
+- [ ] `QueryBuilder`에 `addSelectAndMap` 기능 추가
+- [ ] 국제화 기능 연구
+- [ ] 역변없이 일대다 관계를 만드는 연구 능력
+- [ ] 한번에 여러 객체와 단일 관계를 만드는 연구 능력
+- [ ] 더 많은 트리 저장소 기능
+- [ ] cli: 데이터베이스 백업 생성 명령
+- [ ] `query` 메서드 기능 확장
+- [ ] 더 나은 내부 ORM 로깅
+- [ ] 더 나은 오류 처리 및 사용자 친화적 인 메시지
+- [ ] 더 나은 JavaScript 지원 - 더 많은 문서 및 테스트 범위
+- [ ] NativeScript 지원 조사
+- [ ] 명명 전략 구현 완료
+- [ ] 소프트 삭제 구현
 
 ## 0.2.0
 
-- [x] add more tree-table features: nested set and materialized path; more repository methods
-- [x] fix Oracle driver issues and make oracle stable and ready for production use
-- [x] implement migrations generator for all drivers
-- [x] create example how to use TypeORM in Electron apps
-- [x] finish subscribers and listeners implementation
-- [x] refactor persistence mechanism
-- [x] fix all issues with cascades and make stable functionality
-- [x] implement API for manual migration creation
-- [x] add sql.js driver
-- [x] fix inheritance support issues
+- [x] 더 많은 트리 테이블 기능 추가: 중첩 세트 및 구체화된 경로; 더 많은 저장소 방법
+- [x] Oracle 드라이버 문제를 수정하고 Oracle을 안정적으로 만들고 프로덕션 사용 준비
+- [x] 모든 드라이버에 대한 마이그레이션 생성기 구현
+- [x] Electron 앱에서 TypeORM을 사용하는 방법 예제 생성
+- [x] 구독자 및 청취자 구현 완료
+- [x] 리팩터링 지속성 메커니즘
+- [x] 캐스케이드로 모든 문제를 해결하고 안정적인 기능을 만듭니다.
+- [x] 수동 마이그레이션 생성을위한 API 구현
+- [x] sql.js 드라이버 추가
+- [x] 상속 지원 문제 수정

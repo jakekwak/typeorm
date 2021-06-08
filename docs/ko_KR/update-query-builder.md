@@ -1,8 +1,9 @@
-# Update using Query Builder
+# 쿼리 작성기를 사용하여 업데이트
 
-You can create `UPDATE` queries using `QueryBuilder`.
-Examples:
-             
+`QueryBuilder`를 사용하여 `UPDATE` 쿼리를 만들 수 있습니다.
+
+예:
+
 ```typescript
 import {getConnection} from "typeorm";
 
@@ -14,11 +15,11 @@ await getConnection()
     .execute();
 ```
 
-This is the most efficient way in terms of performance to update entities in your database.
+이는 데이터베이스의 엔티티를 업데이트하는 성능 측면에서 가장 효율적인 방법입니다.
 
-### Raw SQL support 
+### 원시 SQL 지원
 
-In some cases when you need to execute SQL queries you need to use function style value:
+SQL 쿼리를 실행해야하는 경우에는 함수 스타일 값을 사용해야합니다.
 
 
 ```typescript
@@ -27,8 +28,8 @@ import {getConnection} from "typeorm";
 await getConnection()
     .createQueryBuilder()
     .update(User)
-    .set({ 
-        firstName: "Timber", 
+    .set({
+        firstName: "Timber",
         lastName: "Saw",
         age: () => "age + 1"
     })
@@ -36,4 +37,4 @@ await getConnection()
     .execute();
 ```
 
-This syntax doesn't escape your values, you need to handle escape on your own.
+이 구문은 값을 이스케이프하지 않으므로 이스케이프를 직접 처리해야합니다.

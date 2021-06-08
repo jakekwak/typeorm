@@ -1,21 +1,19 @@
-# Tree Entities
+# 트리 엔티티
 
-TypeORM supports the Adjacency list and Closure table patterns for storing tree structures.
-To learn more about hierarchy table take a look at [this awesome presentation by Bill Karwin](https://www.slideshare.net/billkarwin/models-for-hierarchical-data).
+TypeORM은 트리 구조를 저장하기 위해 인접 목록 및 클로저 테이블 패턴을 지원합니다. 계층 구조 테이블에 대한 자세한 내용은 [Bill Karwin의 멋진 프레젠테이션](https://www.slideshare.net/billkarwin/models-for-hierarchical-data)을 참조하세요.
 
-* [Adjacency list](#adjacency-list)
-* [Nested set](#nested-set)
-* [Materialized Path (aka Path Enumeration)](#materialized-path-aka-path-enumeration)
-* [Closure table](#closure-table)
-* [Working with tree entities](#working-with-tree-entities)
+- [인접 목록](#인접-목록)
+- [중첩 세트](#중첩-세트)
+- [구체화된 경로(일명 경로 열거)](#구체화된-경로일명-경로-열거)
+- [클로저 테이블](#클로저-테이블)
+- [트리 엔티티와 작업하기](#트리-엔티티와-작업하기)
 
-## Adjacency list
 
-Adjacency list is a simple model with self-referencing.
-The benefit of this approach is simplicity,
-drawback is that you can't load big trees in all at once because of join limitations.
-To learn more about the benefits and use of Adjacency Lists look at [this article by Matthew Schinckel](http://schinckel.net/2014/09/13/long-live-adjacency-lists/).
-Example:
+## 인접 목록
+
+인접 목록은 자체 참조가 있는 간단한 모델입니다. 이 접근 방식의 이점은 단순성이며, 결점은 조인 제한으로 인해 한번에 큰 트리를 로드할 수 없다는 것입니다. 인접 목록의 이점과 사용에 대한 자세한 내용은 [Matthew Schinckel의 이 기사](http://schinckel.net/2014/09/13/long-live-adjacency-lists/)를 참조하십시오.
+
+예:
 
 ```typescript
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typeorm";
@@ -41,12 +39,11 @@ export class Category {
 
 ```
 
-## Nested set
+## 중첩 세트
 
-Nested set is another pattern of storing tree structures in the database.
-Its very efficient for reads, but bad for writes.
-You cannot have multiple roots in nested set.
-Example:
+중첩 세트는 데이터베이스에 트리 구조를 저장하는 또 다른 패턴입니다. 읽기에는 매우 효율적이지만 쓰기에는 좋지 않습니다. 중첩 세트에 여러 루트를 가질 수 없습니다.
+
+예:
 
 ```typescript
 import {Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent, TreeLevelColumn} from "typeorm";
@@ -69,11 +66,11 @@ export class Category {
 }
 ```
 
-## Materialized Path (aka Path Enumeration)
+## 구체화된 경로(일명 경로 열거)
 
-Materialized Path (also called Path Enumeration) is another pattern of storing tree structures in the database.
-Its simple and effective.
-Example:
+구체화된 경로(경로 열거라고도 함)는 데이터베이스에 트리 구조를 저장하는 또 다른 패턴입니다. 간단하고 효과적입니다.
+
+예:
 
 ```typescript
 import {Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent, TreeLevelColumn} from "typeorm";
@@ -96,11 +93,11 @@ export class Category {
 }
 ```
 
-## Closure table
+## 클로저 테이블
 
-Closure table stores relations between parent and child in a separate table in a special way.
-It's efficient in both reads and writes.
-Example:
+클로저 테이블은 부모와 자식간의 관계를 특별한 방식으로 별도의 테이블에 저장합니다. 읽기와 쓰기 모두에서 효율적입니다.
+
+예:
 
 ```typescript
 import {Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent, TreeLevelColumn} from "typeorm";
@@ -123,7 +120,7 @@ export class Category {
 }
 ```
 
-You can specify closure table name and / or closure table columns names by setting optional parameter `options` into `@Tree("closure-table", options)`. `ancestorColumnName` and `descandantColumnName` are callback functions, which receive primary column's metadata and return column's name.
+선택적 매개변수 `options`를 `@Tree("closure-table", options) `로 설정하여 클로저 테이블 이름 및/또는 클로저 테이블 컬럼 이름을 지정할 수 있습니다. `ancestorColumnName` 및 `descandantColumnName`은 기본 컬럼의 메타 데이터를 수신하고 컬럼 이름을 반환하는 콜백 함수입니다.
 
 ```ts
 @Tree("closure-table", {
@@ -133,13 +130,14 @@ You can specify closure table name and / or closure table columns names by setti
 })
 ```
 
-### Note:
-Updating or removing a component's parent has not been implemented yet ([see this issue](https://github.com/typeorm/typeorm/issues/2032)). The closure table will need to be explicitly updated to do either of these operations.
+> 노트:
+> 구성요소의 부모 업데이트 또는 제거는 아직 구현되지 않았습니다 ([이 문제 참조](https://github.com/typeorm/typeorm/issues/2032)). 이러한 작업중 하나를 수행하려면 클로저 테이블을 명시적으로 업데이트해야 합니다.
 
-## Working with tree entities
+## 트리 엔티티와 작업하기
 
-To make bind tree entities to each other its important to set to children entities their parent and save them,
-for example:
+바인드 트리 엔티티를 서로에게 연결하려면 하위 엔티티를 부모로 설정하고 저장하는 것이 중요합니다.
+
+예를 들면 :
 
 ```typescript
 const manager = getManager();
@@ -169,14 +167,14 @@ a112.parent = a11;
 await manager.save(a112);
 ```
 
-To load such a tree use `TreeRepository`:
+이러한 트리를 로드하려면 `TreeRepository`를 사용하십시오.
 
 ```typescript
 const manager = getManager();
 const trees = await manager.getTreeRepository(Category).findTrees();
 ```
 
-`trees` will be following:
+`trees`는 다음과 같습니다.
 
 ```json
 [{
@@ -199,38 +197,37 @@ const trees = await manager.getTreeRepository(Category).findTrees();
 }]
 ```
 
-There are other special methods to work with tree entities through `TreeRepository`:
+`TreeRepository`를 통해 트리 엔터티로 작업하는 다른 특수 메서드가 있습니다.
 
-* `findTrees` - Returns all trees in the database with all their children, children of children, etc.
+* `findTrees` - 모든 자식, 자식의 자식등과 함께 데이터베이스의 모든 트리를 반환합니다.
 
 ```typescript
 const treeCategories = await repository.findTrees();
-// returns root categories with sub categories inside
+// 내부에 하위 범주가 있는 루트 범주를 반환합니다.
 ```
 
-* `findRoots` - Roots are entities that have no ancestors. Finds them all.
-Does not load children leafs.
+* `findRoots` - 루트는 조상이 없는 엔티티입니다. 그들 모두를 찾습니다. 자식 잎(leaf)을 로드하지 않습니다.
 
 ```typescript
 const rootCategories = await repository.findRoots();
-// returns root categories without sub categories inside
+// 내부에 하위 범주가 없는 루트 범주를 반환합니다.
 ```
 
-* `findDescendants` - Gets all children (descendants) of the given entity. Returns them all in a flat array.
+* `findDescendants` - 지정된 엔티티의 모든 하위(하위 항목)를 가져옵니다. 모두 플랫 배열로 반환합니다.
 
 ```typescript
 const children = await repository.findDescendants(parentCategory);
-// returns all direct subcategories (without its nested categories) of a parentCategory
+// parentCategory의 모든 직접 하위 범주(중첩된 범주 없음)를 반환합니다.
 ```
 
-* `findDescendantsTree` - Gets all children (descendants) of the given entity. Returns them in a tree - nested into each other.
+* `findDescendantsTree` - 지정된 엔티티의 모든 하위(하위 항목)를 가져옵니다. 서로 중첩된 트리로 반환합니다.
 
 ```typescript
 const childrenTree = await repository.findDescendantsTree(parentCategory);
-// returns all direct subcategories (with its nested categories) of a parentCategory
+// parentCategory의 모든 직접 하위 범주(중첩 범주 포함)를 반환합니다.
 ```
 
-* `createDescendantsQueryBuilder` - Creates a query builder used to get descendants of the entities in a tree.
+* `createDescendantsQueryBuilder` - 트리에서 항목의 하위 항목을 가져 오는데 사용되는 쿼리 작성기를 만듭니다.
 
 ```typescript
 const children = await repository
@@ -239,27 +236,27 @@ const children = await repository
     .getMany();
 ```
 
-* `countDescendants` - Gets number of descendants of the entity.
+* `countDescendants` - 엔터티의 하위 항목 수를 가져옵니다.
 
 ```typescript
 const childrenCount = await repository.countDescendants(parentCategory);
 ```
 
-* `findAncestors` - Gets all parent (ancestors) of the given entity. Returns them all in a flat array.
+* `findAncestors` - 지정된 엔티티의 모든 상위(조상)를 가져옵니다. 모두 플랫 배열로 반환합니다.
 
 ```typescript
 const parents = await repository.findAncestors(childCategory);
-// returns all direct childCategory's parent categories (without "parent of parents")
+// 모든 직접 childCategory의 상위 범주를 반환합니다("부모의 부모" 제외).
 ```
 
-* `findAncestorsTree` - Gets all parent (ancestors) of the given entity. Returns them in a tree - nested into each other.
+* `findAncestorsTree` - 지정된 엔티티의 모든 상위(조상)를 가져옵니다. 서로 중첩된 트리로 반환합니다.
 
 ```typescript
 const parentsTree = await repository.findAncestorsTree(childCategory);
-// returns all direct childCategory's parent categories (with "parent of parents")
+// 모든 직접 childCategory의 상위 범주를 반환합니다("부모의 부모" 포함).
 ```
 
-* `createAncestorsQueryBuilder` - Creates a query builder used to get ancestors of the entities in a tree.
+* `createAncestorsQueryBuilder` - 트리에서 항목의 상위 항목을 가져 오는데 사용되는 쿼리 작성기를 만듭니다.
 
 ```typescript
 const parents = await repository
@@ -268,7 +265,7 @@ const parents = await repository
     .getMany();
 ```
 
-* `countAncestors` - Gets the number of ancestors of the entity.
+* `countAncestors` - 엔터티의 조상 수를 가져옵니다.
 
 ```typescript
 const parentsCount = await repository.countAncestors(childCategory);

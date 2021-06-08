@@ -1,67 +1,66 @@
 # Decorators reference
 
-* [Entity decorators](#entity-decorators)
-    * [`@Entity`](#entity)
-    * [`@ViewEntity`](#viewentity)
-* [Column decorators](#column-decorators)
-    * [`@Column`](#column)
-    * [`@PrimaryColumn`](#primarycolumn)
-    * [`@PrimaryGeneratedColumn`](#primarygeneratedcolumn)
-    * [`@ObjectIdColumn`](#objectidcolumn)
-    * [`@CreateDateColumn`](#createdatecolumn)
-    * [`@UpdateDateColumn`](#updatedatecolumn)
-    * [`@DeleteDateColumn`](#deletedatecolumn)
-    * [`@VersionColumn`](#versioncolumn)
-    * [`@Generated`](#generated)
-* [Relation decorators](#relation-decorators)
-    * [`@OneToOne`](#onetoone)
-    * [`@ManyToOne`](#manytoone)
-    * [`@OneToMany`](#onetomany)
-    * [`@ManyToMany`](#manytomany)
-    * [`@JoinColumn`](#joincolumn)
-    * [`@JoinTable`](#jointable)
-    * [`@RelationId`](#relationid)
-* [Subscriber and listener decorators](#subscriber-and-listener-decorators)
-    * [`@AfterLoad`](#afterload)
-    * [`@BeforeInsert`](#beforeinsert)
-    * [`@AfterInsert`](#afterinsert)
-    * [`@BeforeUpdate`](#beforeupdate)
-    * [`@AfterUpdate`](#afterupdate)
-    * [`@BeforeRemove`](#beforeremove)
-    * [`@AfterRemove`](#afterremove)
-    * [`@EventSubscriber`](#eventsubscriber)
-* [Other decorators](#other-decorators)
-    * [`@Index`](#index)
-    * [`@Unique`](#unique)
-    * [`@Check`](#check)
-    * [`@Exclusion`](#exclusion)
-    * [`@Transaction`, `@TransactionManager` and `@TransactionRepository`](#transaction-transactionmanager-and-transactionrepository)
-    * [`@EntityRepository`](#entityrepository)
+- [엔티티 데코레이터](#엔티티-데코레이터)
+    - [`@Entity`](#entity)
+    - [`@ViewEntity`](#viewentity)
+- [컬럼 데코레이터](#컬럼-데코레이터)
+    - [`@Column`](#column)
+    - [`@PrimaryColumn`](#primarycolumn)
+    - [`@PrimaryGeneratedColumn`](#primarygeneratedcolumn)
+    - [`@ObjectIdColumn`](#objectidcolumn)
+    - [`@CreateDateColumn`](#createdatecolumn)
+    - [`@UpdateDateColumn`](#updatedatecolumn)
+    - [`@DeleteDateColumn`](#deletedatecolumn)
+    - [`@VersionColumn`](#versioncolumn)
+    - [`@Generated`](#generated)
+- [관계 데코레이터](#관계-데코레이터)
+    - [`@OneToOne`](#onetoone)
+    - [`@ManyToOne`](#manytoone)
+    - [`@OneToMany`](#onetomany)
+    - [`@ManyToMany`](#manytomany)
+    - [`@JoinColumn`](#joincolumn)
+    - [`@JoinTable`](#jointable)
+    - [`@RelationId`](#relationid)
+- [구독자 및 리스너 데코레이터](#구독자-및-리스너-데코레이터)
+    - [`@AfterLoad`](#afterload)
+    - [`@BeforeInsert`](#beforeinsert)
+    - [`@AfterInsert`](#afterinsert)
+    - [`@BeforeUpdate`](#beforeupdate)
+    - [`@AfterUpdate`](#afterupdate)
+    - [`@BeforeRemove`](#beforeremove)
+    - [`@AfterRemove`](#afterremove)
+    - [`@EventSubscriber`](#eventsubscriber)
+- [기타 데코레이터](#기타-데코레이터)
+    - [`@Index`](#index)
+    - [`@Unique`](#unique)
+    - [`@Check`](#check)
+    - [`@Exclusion`](#exclusion)
+    - [`@Transaction`, `@TransactionManager` 및 `@TransactionRepository`](#transaction-transactionmanager-및-transactionrepository)
+    - [`@EntityRepository`](#entityrepository)
 
-## Entity decorators
+## 엔티티 데코레이터
 
 #### `@Entity`
 
-Marks your model as an entity. Entity is a class which is transformed into a database table.
-You can specify the table name in the entity:
+모델을 엔티티로 표시합니다. 엔티티는 데이터베이스 테이블로 변환되는 클래스입니다. 엔터티에 테이블 이름을 지정할 수 있습니다.
 
 ```typescript
 @Entity("users")
 export class User {
 ```
 
-This code will create a database table named "users".
+이 코드는 "users"라는 데이터베이스 테이블을 생성합니다.
 
-You can also specify some additional entity options:
+몇가지 추가 엔티티 옵션을 지정할 수도 있습니다.
 
-* `name` - table name. If not specified, then table name is generated from entity class name.
-* `database` - database name in selected DB server.
-* `schema` - schema name.
-* `engine` - database engine to be set during table creation (works only in some databases).
-* `synchronize` - entities marked with `false` are skipped from schema updates.
-* `orderBy` - specifies default ordering for entities when using `find` operations and `QueryBuilder`.
+* `name` - 테이블 이름. 지정하지 않으면 엔티티 클래스 이름에서 테이블 이름이 생성됩니다.
+* `database` - 선택한 DB 서버의 데이터베이스 이름.
+* `schema` - 스키마 이름.
+* `engine` - 테이블 생성 중 설정할 데이터베이스 엔진 (일부 데이터베이스에서만 작동)
+* `synchronize` - `false`로 표시된 항목은 스키마 업데이트에서 건너뜁니다.
+* `orderBy` - `find` 작업 및 `QueryBuilder`를 사용할 때 항목의 기본 순서를 지정합니다.
 
-Example:
+예:
 
 ```typescript
 @Entity({
@@ -78,20 +77,20 @@ Example:
 export class User {
 ```
 
-Learn more about [Entities](entities.md).
+[엔티티](entities.md)에 대해 자세히 알아보세요.
 
 #### `@ViewEntity`
 
-View entity is a class that maps to a database view.
+뷰 엔터티는 데이터베이스 뷰에 매핑되는 클래스입니다.
 
-`@ViewEntity()` accepts following options:
+`@ViewEntity ()`는 다음 옵션을 허용합니다.
 
-* `name` - view name. If not specified, then view name is generated from entity class name.
-* `database` - database name in selected DB server.
-* `schema` - schema name.
-* `expression` - view definition. **Required parameter**.
+* `name` - 뷰 이름. 지정하지 않으면 엔티티 클래스 이름에서 뷰 이름이 생성됩니다.
+* `database` - 선택한 DB 서버의 데이터베이스 이름.
+* `schema` - 스키마 이름.
+* `expression` - 뷰 정의. **필수 매개 변수**.
 
-`expression` can be string with properly escaped columns and tables, depend on database used (postgres in example):
+`expression`은 사용된 데이터베이스 (예: postgres)에 따라 적절하게 이스케이프된 컬럼과 테이블이 있는 문자열일 수 있습니다.
 
 ```typescript
 @ViewEntity({
@@ -104,7 +103,7 @@ View entity is a class that maps to a database view.
 export class PostCategory {
 ```
 
-or an instance of QueryBuilder
+또는 QueryBuilder의 인스턴스
 
 ```typescript
 @ViewEntity({
@@ -118,7 +117,7 @@ or an instance of QueryBuilder
 export class PostCategory {
 ```
 
-**Note:** parameter binding is not supported due to drivers limitations. Use the literal parameters instead.
+**참고:** 매개변수 바인딩은 드라이버 제한으로 인해 지원되지 않습니다. 대신 리터럴 매개변수를 사용하십시오.
 
 ```typescript
 @ViewEntity({
@@ -134,14 +133,15 @@ export class PostCategory {
 export class PostCategory {
 ```
 
-Learn more about [View Entities](view-entities.md).
+[뷰 엔티티](view-entities.md)에 대해 자세히 알아보세요.
 
-## Column decorators
+## 컬럼 데코레이터
 
 #### `@Column`
 
-Marks a property in your entity as a table column.
-Example:
+엔터티의 속성을 테이블 컬럼으로 표시합니다.
+
+예:
 
 ```typescript
 @Entity("users")
@@ -161,54 +161,44 @@ export class User {
 }
 ```
 
-`@Column` accept several options you can use:
+`@ Column`은 사용할 수 있는 몇가지 옵션을 허용합니다.
 
-* `type: ColumnType` - Column type. One of the [supported column types](entities.md#column-types).
-* `name: string` - Column name in the database table.
-By default the column name is generated from the name of the property.
-You can change it by specifying your own name.
-* `length: string|number` - Column type's length. For example, if you want to create `varchar(150)` type
-you specify column type and length options.
-* `width: number` - column type's display width. Used only for [MySQL integer types](https://dev.mysql.com/doc/refman/5.7/en/integer-types.html)
-* `onUpdate: string` - `ON UPDATE` trigger. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/timestamp-initialization.html).
-* `nullable: boolean` - Makes column `NULL` or `NOT NULL` in the database.
-By default column is `nullable: false`.
-* `update: boolean` - Indicates if column value is updated by "save" operation. If false, you'll be able to write this value only when you first time insert the object.
-Default value is `true`.
-* `insert: boolean` - Indicates if column value is set the first time you insert the object.  Default value is `true`.
-* `select: boolean` - Defines whether or not to hide this column by default when making queries. When set to `false`, the column data will not show with a standard query. By default column is `select: true`
-* `default: string` - Adds database-level column's `DEFAULT` value.
-* `primary: boolean` - Marks column as primary. Same as using  `@PrimaryColumn`.
-* `unique: boolean` - Marks column as unique column (creates unique constraint). Default value is false.
-* `comment: string` - Database's column comment. Not supported by all database types.
-* `precision: number` - The precision for a decimal (exact numeric) column (applies only for decimal column), which is the maximum
- number of digits that are stored for the values. Used in some column types.
-* `scale: number` - The scale for a decimal (exact numeric) column (applies only for decimal column),
-which represents the number of digits to the right of the decimal point and must not be greater than precision.
-Used in some column types.
-* `zerofill: boolean` - Puts `ZEROFILL` attribute on to a numeric column. Used only in MySQL.
-If `true`, MySQL automatically adds the `UNSIGNED` attribute to this column.
-* `unsigned: boolean` - Puts `UNSIGNED` attribute on to a numeric column. Used only in MySQL.
-* `charset: string` - Defines a column character set. Not supported by all database types.
-* `collation: string` - Defines a column collation.
-* `enum: string[]|AnyEnum` - Used in `enum` column type to specify list of allowed enum values.
-You can specify array of values or specify a enum class.
-* `enumName: string` - A name for generated enum type. If not specified, TypeORM will generate a enum type from entity and column names - so it's neccessary if you intend to use the same enum type in different tables.
-* `asExpression: string` - Generated column expression. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html).
-* `generatedType: "VIRTUAL"|"STORED"` - Generated column type. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html).
-* `hstoreType: "object"|"string"` - Return type of `HSTORE` column. Returns value as string or as object. Used only in [Postgres](https://www.postgresql.org/docs/9.6/static/hstore.html).
-* `array: boolean` - Used for postgres and cockroachdb column types which can be array (for example int[]).
-* `transformer: ValueTransformer|ValueTransformer[]` - Specifies a value transformer (or array of value transformers) that is to be used to (un)marshal this column when reading or writing to the database. In case of an array, the value transformers will be applied in the natural order from entityValue to databaseValue, and in reverse order from databaseValue to entityValue.
-* `spatialFeatureType: string` - Optional feature type (`Point`, `Polygon`, `LineString`, `Geometry`) used as a constraint on a spatial column. If not specified, it will behave as though `Geometry` was provided. Used only in PostgreSQL.
-* `srid: number` - Optional [Spatial Reference ID](https://postgis.net/docs/using_postgis_dbmanagement.html#spatial_ref_sys) used as a constraint on a spatial column. If not specified, it will default to `0`. Standard geographic coordinates (latitude/longitude in the WGS84 datum) correspond to [EPSG 4326](http://spatialreference.org/ref/epsg/wgs-84/). Used only in PostgreSQL.
+* `type: ColumnType` - 컬럼 타입. [지원되는 컬럼 타입](entities.md#column-types) 중 하나입니다.
+* `name: string` - 데이터베이스 테이블의 컬럼 이름입니다. 기본적으로 컬럼 이름은 속성 이름에서 생성됩니다. 자신의 이름을 지정하여 변경할 수 있습니다.
+* `length: string|number` - 컬럼 타입의 길이. 예를 들어 `varchar(150)` 타입을 생성하려면 컬럼 타입과 길이 옵션을 지정합니다.
+* `width: number` - 컬럼 타입의 표시 너비. [MySQL 정수 유형](https://dev.mysql.com/doc/refman/5.7/en/integer-types.html)에만 사용됩니다.
+* `onUpdate: string` - `ON UPDATE` 트리거. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/timestamp-initialization.html)에서만 사용됩니다.
+* `nullable: boolean` - 데이터베이스에서 `NULL`또는 `NOT NULL` 컬럼을 만듭니다. 기본적으로 컬럼은 `nullable: false` 입니다.
+* `update: boolean` - 컬럼 값이 "save" 작업으로 업데이트되었는지 여부를 나타냅니다. false인 경우 객체를 처음 삽입할 때만 이 값을 쓸 수 있습니다. 기본값은 `true`입니다.
+* `insert: boolean` - 객체를 처음 삽입할 때 컬럼 값이 설정되었는지 여부를 나타냅니다. 기본값은 `true`입니다.
+* `select: boolean` - 쿼리를 만들 때 기본적으로 이 컬럼을 숨길 지 여부를 정의합니다. `false`로 설정하면 컬럼 데이터가 표준 쿼리에 표시되지 않습니다. 기본 열은 `select: true`입니다.
+* `default: string` - 데이터베이스 수준 컬럼의 `DEFAULT`값을 추가합니다.
+* `primary: boolean` - 컬럼을 기본으로 표시합니다. `@PrimaryColumn`을 사용하는 것과 동일합니다.
+* `unique: boolean` - 컬럼을 고유한 컬럼으로 표시합니다 (고유 제약조건 생성). 기본값은 `false`입니다.
+* `comment: string` - 데이터베이스의 컬럼의 주석입니다. 모든 데이터베이스 타입에서 지원되지는 않습니다.
+* `precision: number` - 값에 대해 저장되는 최대 자릿수인 10진수(정확히 숫자) 컬럼의 정밀도(10진수 컬럼에만 적용됨). 일부 컬럼 타입에서 사용됩니다.
+* `scale: number` - 소수점 오른쪽의 자릿수를 나타내며 정밀도보다 크지 않아야 하는 10진수(정확히 숫자) 컬럼 (10진수 컬럼에만 적용됨)의 스케일입니다. 일부 컬럼 타입에서 사용됩니다.
+* `zerofill: boolean` - 숫자 컬럼에 `ZEROFILL` 속성을 추가합니다. MySQL에서만 사용됩니다. `true`인 경우 MySQL은 자동으로 이 컬럼에 `UNSIGNED` 속성을 추가합니다.
+* `unsigned: boolean` - 숫자 컬럼에 `UNSIGNED` 속성을 추가합니다. MySQL에서만 사용됩니다.
+* `charset: string` - 컬럼 문자집합을 정의합니다. 모든 데이터베이스 타입에서 지원되지는 않습니다.
+* `collation: string` - 컬럼 데이터 정렬.
+* `enum: string[]|AnyEnum` - 허용되는 열거형 값 목록을 지정하기 위해 `enum` 컬럼 타입에 사용됩니다. 값 배열을 지정하거나 열거형 클래스를 지정할 수 있습니다.
+* `enumName: string` - 생성된 열거형 타입의 이름입니다. 지정하지 않으면 TypeORM은 엔티티 및 컬럼 이름에서 열거형 유형을 생성하므로 다른 테이블에서 동일한 열거형 타입을 사용하려는 경우 필요합니다.
+* `asExpression: string` - 생성된 컬럼 표현식. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html)에서만 사용됩니다.
+* `generatedType: "VIRTUAL"|"STORED"` - 생성된 컬럼 타입. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html)에서만 사용됩니다.
+* `hstoreType: "object"|"string"` - `HSTORE` 컬럼의 반환타입입니다. 값을 문자열 또는 객체로 반환합니다. [Postgres](https://www.postgresql.org/docs/9.6/static/hstore.html)에서만 사용됩니다.
+* `array: boolean` - 배열이 될 수 있는 postgres 및 cockroachdb 컬럼 타입에 사용됩니다(예: int[]).
+* `transformer: ValueTransformer|ValueTransformer[]` - 데이터베이스를 읽거나 쓸 때 이 컬럼을 마샬링하는 데 사용할 값 변환기(또는 값 변환기 배열)를 지정합니다. 배열의 경우 값 변환기는 entityValue에서 databaseValue로 자연 순서로 적용되고 databaseValue에서 entityValue로 역순으로 적용됩니다.
+* `spatialFeatureType: string` - 공간 컬럼(spatial column)에 대한 제약으로 사용되는 선택적 기능 타입(`Point`, `Polygon`, `LineString`, `Geometry`)입니다. 지정하지 않으면 `Geometry`가 제공된 것처럼 작동합니다. PostgreSQL에서만 사용됩니다.
+* `srid: number` - 공간 컬럼에 대한 제약조건으로 사용되는 선택적 [공간 참조 ID](https://postgis.net/docs/using_postgis_dbmanagement.html#spatial_ref_sys) 지정하지 않으면 기본값은 `0`입니다. 표준 지리 좌표 (WGS84 데이텀의 위도/경도)는 [EPSG 4326](http://spatialreference.org/ref/epsg/wgs-84/)에 해당합니다. PostgreSQL에서만 사용됩니다.
 
-Learn more about [entity columns](entities.md#entity-columns).
+[엔티티 컬럼](entities.md#entity-columns)에 대해 자세히 알아보세요.
 
 #### `@PrimaryColumn`
 
-Marks a property in your entity as a table primary column.
-Same as `@Column` decorator but sets its `primary` option to true.
-Example:
+엔터티의 속성을 테이블 기본 열로 표시합니다. `@Column` 데코레이터와 동일하지만 `primary` 옵션을 true로 설정합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -220,13 +210,13 @@ export class User {
 }
 ```
 
-Learn more about [entity columns](entities.md#entity-columns).
+[엔티티 컬럼](entities.md#entity-columns)에 대해 자세히 알아보세요.
 
 #### `@PrimaryGeneratedColumn`
 
-Marks a property in your entity as a table-generated primary column.
-Column it creates is primary and its value is auto-generated.
-Example:
+엔터티의 속성을 테이블 생성 기본 컬럼으로 표시합니다. 생성된 컬럼은 기본이며 해당값은 자동생성됩니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -238,15 +228,14 @@ export class User {
 }
 ```
 
-There are two generation strategies:
+두가지 생성 전략이 있습니다.
 
-* `increment` - uses AUTO_INCREMENT / SERIAL / SEQUENCE (depend on database type) to generate incremental number.
-* `uuid` - generates unique `uuid` string.
-* `rowid` - only for [CockroachDB](https://www.cockroachlabs.com/docs/stable/serial.html). Value is automatically generated using the `unique_rowid()`
-function. This produces a 64-bit integer from the current timestamp and ID of the node executing the `INSERT` or `UPSERT` operation.
-> Note: property with a `rowid` generation strategy must be a `string` data type
+* `increment` - AUTO_INCREMENT / SERIAL / SEQUENCE (데이터베이스 유형에 따라 다름)를 사용하여 증분 번호를 생성합니다.
+* `uuid` - 고유한 `uuid` 문자열을 생성합니다.
+* `rowid` - [CockroachDB](https://www.cockroachlabs.com/docs/stable/serial.html)에만 해당됩니다. 값은 `unique_rowid()` 함수를 사용하여 자동으로 생성됩니다. 이렇게하면 `INSERT` 또는 `UPSERT` 작업을 실행하는 노드의 현재 타임 스탬프 및 ID에서 64 비트 정수가 생성됩니다.
+> 참고: `rowid` 생성 전략이 있는 속성은 `string` 데이터 타입이어야 합니다.
 
-Default generation strategy is `increment`, to change it to another strategy, simply pass it as the first argument to decorator:
+기본 생성 전략은 `increment`입니다. 다른 전략으로 변경하려면 데코레이터에 첫 번째 인수로 전달하면됩니다.
 
 ```typescript
 @Entity()
@@ -258,14 +247,13 @@ export class User {
 }
 ```
 
-Learn more about [entity columns](entities.md#entity-columns).
+[엔티티 컬럼](entities.md#entity-columns)에 대해 자세히 알아보세요.
 
 #### `@ObjectIdColumn`
 
-Marks a property in your entity as ObjectID.
-This decorator is only used in MongoDB.
-Every entity in MongoDB must have a ObjectID column.
-Example:
+엔터티의 속성을 ObjectID로 표시합니다. 이 데코레이터는 MongoDB에서만 사용됩니다. MongoDB의 모든 항목에는 ObjectID 컬럼이 있어야 합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -277,13 +265,13 @@ export class User {
 }
 ```
 
-Learn more about [MongoDB](mongodb.md).
+[MongoDB](mongodb.md)에 대해 자세히 알아보세요.
 
 #### `@CreateDateColumn`
 
-Special column that is automatically set to the entity's insertion time.
-You don't need to write a value into this column - it will be automatically set.
-Example:
+엔티티의 생성시간으로 자동 설정되는 특수 컬럼입니다. 이 컬럼에 값을 쓸 필요가 없습니다. 자동으로 설정됩니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -297,9 +285,7 @@ export class User {
 
 #### `@UpdateDateColumn`
 
-Special column that is automatically set to the entity's update time
-each time you call `save` from entity manager or repository.
-You don't need to write a value into this column - it will be automatically set.
+엔티티 관리자 또는 저장소에서 `save`를 호출할 때마다 엔티티 업데이트 시간으로 자동 설정되는 특수 컬럼입니다. 이 컬럼에 값을 쓸 필요가 없습니다. 자동으로 설정됩니다.
 
 ```typescript
 @Entity()
@@ -313,11 +299,11 @@ export class User {
 
 #### `@DeleteDateColumn`
 
-Special column that is automatically set to the entity's delete time each time you call soft-delete of entity manager or repository. You don't need to set this column - it will be automatically set.
+엔티티 관리자 또는 저장소의 일시 삭제를 호출할 때마다 엔티티 삭제시간에 자동으로 설정되는 특수 컬럼입니다. 이 컬럼은 설정할 필요가 없습니다. 자동으로 설정됩니다.
 
-TypeORM's own soft delete functionality utilizes global scopes to only pull "non-deleted" entities from the database.
+TypeORM의 자체 소프트 삭제 기능은 전역 범위를 활용하여 데이터베이스에서 "삭제되지 않은" 항목만 가져옵니다.
 
-If the @DeleteDateColumn is set, the default scope will be "non-deleted".
+`@DeleteDateColumn`이 설정된 경우 기본 범위는 "삭제되지 않음"입니다.
 
 ```typescript
 @Entity()
@@ -331,9 +317,7 @@ export class User {
 
 #### `@VersionColumn`
 
-Special column that is automatically set to the entity's version (incremental number)
-each time you call `save` from entity manager or repository.
-You don't need to write a value into this column - it will be automatically set.
+엔티티 관리자 또는 저장소에서 `save`를 호출할 때마다 엔티티의 버전(증분 번호)으로 자동 설정되는 특수 컬럼입니다. 이 컬럼에 값을 쓸 필요가 없습니다. 자동으로 설정됩니다.
 
 ```typescript
 @Entity()
@@ -347,7 +331,7 @@ export class User {
 
 #### `@Generated`
 
-Marks column to be a generated value. For example:
+컬럼을 생성된 값으로 표시합니다. 예를 들면:
 
 ```typescript
 @Entity()
@@ -360,16 +344,15 @@ export class User {
 }
 ```
 
-Value will be generated only once, before inserting the entity into the database.
+값은 데이터베이스에 엔티티를 삽입하기 전에 한번만 생성됩니다.
 
-## Relation decorators
+## 관계 데코레이터
 
 #### `@OneToOne`
 
-One-to-one is a relation where A contains only once instance of B, and B contains only one instance of A.
-Let's take for example `User` and `Profile` entities.
-User can have only a single profile, and a single profile is owned by only a single user.
-Example:
+일대일은 A가 B의 인스턴스를 한번만 포함하고 B는 A의 인스턴스를 하나만 포함하는 관계입니다. 예를 들어 `User` 및 `Profile` 엔티티를 보겠습니다. 사용자는 단일 프로필만 가질 수 있으며 단일 프로필은 단일 사용자만 소유합니다.
+
+예:
 
 ```typescript
 import {Entity, OneToOne, JoinColumn} from "typeorm";
@@ -385,14 +368,13 @@ export class User {
 }
 ```
 
-Learn more about [one-to-one relations](one-to-one-relations.md).
+[일대일 관계](one-to-one-relations.md)에 대해 자세히 알아보세요.
 
 #### `@ManyToOne`
 
-Many-to-one / one-to-many is a relation where A contains multiple instances of B, but B contains only one instance of A.
-Let's take for example `User` and `Photo` entities.
-User can have multiple photos, but each photo is owned by only one single user.
-Example:
+다대일 / 일대다는 A에 B의 여러 인스턴스가 포함되어 있지만 B에는 A의 인스턴스가 하나만 포함된 관계입니다. 예를 들어 `User` 및 `Photo` 엔티티를 살펴 보겠습니다. 사용자는 여러장의 사진을 가질 수 있지만 각 사진은 한명의 사용자만 소유합니다.
+
+예:
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
@@ -413,14 +395,13 @@ export class Photo {
 }
 ```
 
-Learn more about [many-to-one / one-to-many relations](many-to-one-one-to-many-relations.md).
+[다대일 / 일대다 관계](many-to-one-one-to-many-relations.md)에 대해 자세히 알아보십시오.
 
 #### `@OneToMany`
 
-Many-to-one / one-to-many is a relation where A contains multiple instances of B, but B contains only one instance of A.
-Let's take for example `User` and `Photo` entities.
-User can have multiple photos, but each photo is owned by only a single user.
-Example:
+다대일 / 일대다는 A에 B의 여러 인스턴스가 포함되어 있지만 B에는 A의 인스턴스가 하나만 포함된 관계입니다. 예를 들어 `User` 및 `Photo` 엔티티를 살펴 보겠습니다. 사용자는 여러장의 사진을 가질 수 있지만 각 사진은 한명의 사용자만 소유합니다.
+
+예:
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
@@ -441,14 +422,13 @@ export class User {
 }
 ```
 
-Learn more about [many-to-one / one-to-many relations](many-to-one-one-to-many-relations.md).
+[다대일 / 일대다 관계](many-to-one-one-to-many-relations.md)에 대해 자세히 알아보십시오.
 
 #### `@ManyToMany`
 
-Many-to-many is a relation where A contains multiple instances of B, and B contain multiple instances of A.
-Let's take for example `Question` and `Category` entities.
-Question can have multiple categories, and each category can have multiple questions.
-Example:
+다대다는 A에 B의 여러 인스턴스가 포함되고 B에 A의 여러 인스턴스가 포함되는 관계입니다. 예를 들어 `Question` 및 `Category` 항목을 살펴 보겠습니다. 질문에는 여러 카테고리가 있을 수 있으며 각 카테고리에는 여러 질문이 있을 수 있습니다.
+
+예:
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable} from "typeorm";
@@ -473,13 +453,13 @@ export class Question {
 }
 ```
 
-Learn more about [many-to-many relations](many-to-many-relations.md).
+[다대다 관계](many-to-many-relations.md)에 대해 자세히 알아보십시오.
 
 #### `@JoinColumn`
 
-Defines which side of the relation contains the join column with a foreign key and
-allows you to customize the join column name and referenced column name.
-Example:
+외래 키가 있는 조인 컬럼을 포함하는 관계의 측면을 정의하고 조인 컬럼 이름과 참조된 컬럼 이름을 사용자 지정할 수 있습니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -497,10 +477,9 @@ export class Post {
 
 #### `@JoinTable`
 
-Used for `many-to-many` relations and describes join columns of the "junction" table.
-Junction table is a special, separate table created automatically by TypeORM with columns referenced to the related entities.
-You can change the column names inside the junction table and their referenced columns with the `@JoinColumn` decorator. You can also change the name of the generated "junction" table.
-Example:
+`many-to-many` 관계에 사용되며 "정션" 테이블의 조인 컬럼을 설명합니다. 정션 테이블은 관련 엔터티를 참조하는 컬럼과 함께 TypeORM에 의해 자동으로 생성되는 특수한 별도의 테이블입니다. `@JoinColumn` 데코레이터를 사용하여 접합 테이블 내부의 컬럼 이름과 참조된 컬럼을 변경할 수 있습니다. 생성된 "정션" 테이블의 이름을 변경할 수도 있습니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -523,15 +502,13 @@ export class Post {
 }
 ```
 
-If the destination table has composite primary keys,
-then an array of properties must be sent to the `@JoinTable` decorator.
+대상 테이블에 복합 기본키가 있는 경우 속성 배열을 `@JoinTable` 데코레이터로 보내야합니다.
 
 #### `@RelationId`
 
-Loads id (or ids) of specific relations into properties.
-For example, if you have a many-to-one `category` in your `Post` entity,
-you can have a new category id by marking a new property with `@RelationId`.
-Example:
+특정 관계의 ID(또는 ID)를 속성에 로드합니다. 예를 들어 `Post`항목에 다대일 `category`가 있는 경우 `@RelationId`로 새 속성을 표시하여 새 카테고리 ID를 가질 수 있습니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -540,13 +517,13 @@ export class Post {
     @ManyToOne(type => Category)
     category: Category;
 
-    @RelationId((post: Post) => post.category) // you need to specify target relation
+    @RelationId((post: Post) => post.category) // 대상 관계를 지정해야합니다.
     categoryId: number;
 
 }
 ```
 
-This functionality works for all kind of relations, including `many-to-many`:
+이 기능은 `다대다`를 포함한 모든 종류의 관계에서 작동합니다.
 
 ```typescript
 @Entity()
@@ -561,17 +538,15 @@ export class Post {
 }
 ```
 
-Relation id is used only for representation.
-The underlying relation is not added/removed/changed when chaining the value.
+관계 ID는 표현에만 사용됩니다. 기본 관계는 값을 연결할 때 추가/제거/변경되지 않습니다.
 
-## Subscriber and listener decorators
+## 구독자 및 리스너 데코레이터
 
 #### `@AfterLoad`
 
-You can define a method with any name in entity and mark it with `@AfterLoad`
-and TypeORM will call it each time the entity
-is loaded using `QueryBuilder` or repository/manager find methods.
-Example:
+엔터티에 임의의 이름으로 메서드를 정의하고 `@AfterLoad`로 표시하면 TypeORM이 `QueryBuilder` 또는 저장소/관리자 찾기 메서드를 사용하여 엔터티가 로드될 때마다 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -585,13 +560,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@BeforeInsert`
 
-You can define a method with any name in entity and mark it with `@BeforeInsert`
-and TypeORM will call it before the entity is inserted using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeInsert`로 표시하면 TypeORM이 저장소/관리자 `save`를 사용하여 엔티티가 삽입되기 전에 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -603,13 +578,13 @@ export class Post {
     }
 }
 ```
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@AfterInsert`
 
-You can define a method with any name in entity and mark it with `@AfterInsert`
-and TypeORM will call it after the entity is inserted using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@AfterInsert`로 표시하면 TypeORM이 저장소/관리자 `save`를 사용하여 엔티티가 삽입된 후 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -622,13 +597,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@BeforeUpdate`
 
-You can define a method with any name in the entity and mark it with `@BeforeUpdate`
-and TypeORM will call it before an existing entity is updated using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeUpdate`로 표시하면 TypeORM이 저장소/관리자 `save`를 사용하여 기존 엔티티가 업데이트되기 전에 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -641,13 +616,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@AfterUpdate`
 
-You can define a method with any name in the entity and mark it with `@AfterUpdate`
-and TypeORM will call it after an existing entity is updated using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@AfterUpdate`로 표시할 수 있으며 TypeORM은 저장소/관리자 `save`를 사용하여 기존 엔티티가 업데이트된 후이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -660,13 +635,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@BeforeRemove`
 
-You can define a method with any name in the entity and mark it with `@BeforeRemove`
-and TypeORM will call it before a entity is removed using repository/manager `remove`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeRemove`로 표시하면 TypeORM이 저장소/관리자 `remove`를 사용하여 엔티티를 제거하기 전에 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -679,13 +654,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@AfterRemove`
 
-You can define a method with any name in the entity and mark it with `@AfterRemove`
-and TypeORM will call it after the entity is removed using repository/manager `remove`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@AfterRemove`로 표시하면 TypeORM이 저장소/관리자 `remove`를 사용하여 엔티티가 제거된 후 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -698,13 +673,13 @@ export class Post {
 }
 ```
 
-Learn more about [listeners](listeners-and-subscribers.md).
+[리스너](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
 #### `@EventSubscriber`
 
-Marks a class as an event subscriber which can listen to specific entity events or any entity's events.
-Events are fired using `QueryBuilder` and repository/manager methods.
-Example:
+클래스를 특정 엔터티 이벤트 또는 엔터티의 이벤트를 수신할 수 있는 이벤트 구독자로 표시합니다. 이벤트는 `QueryBuilder` 및 저장소/관리자 메소드를 사용하여 시작됩니다.
+
+예:
 
 ```typescript
 @EventSubscriber()
@@ -712,14 +687,14 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 
 
     /**
-     * Indicates that this subscriber only listen to Post events.
+     * 이 구독자가 Post 이벤트만 수신함을 나타냅니다.
      */
     listenTo() {
         return Post;
     }
 
     /**
-     * Called before post insertion.
+     * 포스트 삽입 전에 호출됩니다.
      */
     beforeInsert(event: InsertEvent<Post>) {
         console.log(`BEFORE POST INSERTED: `, event.entity);
@@ -728,15 +703,14 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 }
 ```
 
-You can implement any method from `EntitySubscriberInterface`.
-To listen to any entity, you just omit the `listenTo` method and use `any`:
+`EntitySubscriberInterface`의 모든 메소드를 구현할 수 있습니다. 엔티티를 수신하려면 `listenTo` 메소드를 생략하고 `any`를 사용하면 됩니다.
 
 ```typescript
 @EventSubscriber()
 export class PostSubscriber implements EntitySubscriberInterface {
 
     /**
-     * Called before entity insertion.
+     * 엔티티 삽입 전에 호출됩니다.
      */
     beforeInsert(event: InsertEvent<any>) {
         console.log(`BEFORE ENTITY INSERTED: `, event.entity);
@@ -745,18 +719,15 @@ export class PostSubscriber implements EntitySubscriberInterface {
 }
 ```
 
-Learn more about [subscribers](listeners-and-subscribers.md).
+[구독자](listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
-## Other decorators
+## 기타 데코레이터
 
 #### `@Index`
 
-This decorator allows you to create a database index for a specific column or columns.
-It also allows you to mark column or columns to be unique.
-This decorator can be applied to columns or an entity itself.
-Use it on a column when an index on a single column is needed
-and use it on the entity when a single index on multiple columns is required.
-Examples:
+이 데코레이터를 사용하면 특정 컬럼에 대한 데이터베이스 인덱스를 만들 수 있습니다. 또한 컬럼을 고유하게 표시할 수도 있습니다. 이 데코레이터는 컬럼 또는 엔티티 자체에 적용할 수 있습니다. 단일 컬럼에 대한 인덱스가 필요한 경우 컬럼에 사용하고 여러 열에 대한 단일 인덱스가 필요한 경우 엔터티에 사용합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -789,15 +760,13 @@ export class User {
 }
 ```
 
-Learn more about [indices](indices.md).
+[색인](indices.md)에 대해 자세히 알아보세요.
 
 #### `@Unique`
 
-This decorator allows you to create a database unique constraint for a specific column or columns.
-This decorator can be applied only to an entity itself.
-You must specify the entity field names (not database column names) as arguments.
+이 데코레이터를 사용하면 특정 컬럼에 대한 데이터베이스 고유 제약조건을 만들 수 있습니다. 이 데코레이터는 엔티티 자체에만 적용할 수 있습니다. 엔터티 필드이름(데이터베이스 컬럼 이름 아님)을 인수로 지정해야합니다.
 
-Examples:
+예:
 
 ```typescript
 @Entity()
@@ -817,14 +786,13 @@ export class User {
 }
 ```
 
-> Note: MySQL stores unique constraints as unique indices
+> 참고: MySQL은 고유한 제약조건을 고유 인덱스로 저장합니다.
 
 #### `@Check`
 
-This decorator allows you to create a database check constraint for a specific column or columns.
-This decorator can be applied only to an entity itself.
+이 데코레이터를 사용하면 특정 컬럼에 대한 데이터베이스 검사 제약조건을 만들 수 있습니다. 이 데코레이터는 엔티티 자체에만 적용할 수 있습니다.
 
-Examples:
+예:
 
 ```typescript
 @Entity()
@@ -843,14 +811,13 @@ export class User {
 }
 ```
 
-> Note: MySQL does not support check constraints.
+> 참고: MySQL은 검사 제약조건을 지원하지 않습니다.
 
 #### `@Exclusion`
 
-This decorator allows you to create a database exclusion constraint for a specific column or columns.
-This decorator can be applied only to an entity itself.
+이 데코레이터를 사용하면 특정 컬럼에 대한 데이터베이스 제외 제약조건을 만들 수 있습니다. 이 데코레이터는 엔티티 자체에만 적용할 수 있습니다.
 
-Examples:
+예:
 
 ```typescript
 @Entity()
@@ -868,14 +835,13 @@ export class RoomBooking {
 }
 ```
 
-> Note: Only PostgreSQL supports exclusion constraints.
+> 참고 : PostgreSQL만 제외 제약조건을 지원합니다.
 
-#### `@Transaction`, `@TransactionManager` and `@TransactionRepository`
+#### `@Transaction`, `@TransactionManager` 및 `@TransactionRepository`
 
-`@Transaction` is used on a method and wraps all its execution into a single database transaction.
-All database queries must be performed using the `@TransactionManager` provided manager
-or with the transaction repositories injected with `@TransactionRepository`.
-Examples:
+`@Transaction`은 메서드에서 사용되며 모든 실행을 단일 데이터베이스 트랜잭션으로 래핑합니다. 모든 데이터베이스 쿼리는 `@TransactionManager` 제공 관리자 또는 `@TransactionRepository`가 삽입된 트랜잭션 저장소를 사용하여 수행되어야 합니다.
+
+예:
 
 ```typescript
 
@@ -899,32 +865,33 @@ save(@QueryParam("name") name: string, @TransactionRepository() userRepository: 
 }
 ```
 
-> Note: all operations inside a transaction MUST ONLY use the provided instance of `EntityManager` or injected repositories.
-Using any other source of queries (global manager, global repositories, etc.) will lead to bugs and errors.
+> 참고: 트랜잭션 내부의 모든 작업은 제공된 `EntityManager` 인스턴스 또는 삽입된 저장소만 사용해야 합니다.
 
-Learn more about [transactions](transactions.md).
+다른 쿼리 소스(글로벌 관리자, 글로벌 리포지토리 등)를 사용하면 버그와 오류가 발생합니다.
+
+[트랜잭션](transactions.md)에 대해 자세히 알아보세요.
 
 #### `@EntityRepository`
 
-Marks a custom class as an entity repository.
-Example:
+사용자 정의 클래스를 엔티티 저장소로 표시합니다.
+
+예:
 
 ```typescript
 @EntityRepository()
 export class UserRepository {
 
-    /// ... custom repository methods ...
+    /// ... 사용자 정의 저장소 방법 ...
 
 }
 ```
 
-You can obtain any custom created repository using `connection.getCustomRepository`
-or `entityManager.getCustomRepository` methods.
+`connection.getCustomRepository` 또는 `entityManager.getCustomRepository` 메소드를 사용하여 커스텀으로 생성된 저장소를 얻을 수 있습니다.
 
-Learn more about [custom entity repositories](custom-repository.md).
+[커스텀 엔티티 리포지토리](custom-repository.md)에 대해 자세히 알아보세요.
 
 ----
 
-> Note: some decorators (like `@Tree`, `@ChildEntity`, etc.) aren't
-documented in this reference because they are treated as experimental at the moment.
-Expect to see their documentation in the future.
+> 참고: 일부 데코레이터(`@Tree`, `@ChildEntity` 등)는 그렇지 않습니다.
+
+현재 실험적인 것으로 취급되기 때문에 이 참조에 문서화되어 있습니다. 향후 문서를 볼 수 있습니다.

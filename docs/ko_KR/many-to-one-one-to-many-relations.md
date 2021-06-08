@@ -1,8 +1,8 @@
-# Many-to-one / one-to-many relations
+# 다대일 / 일대다 관계
 
-Many-to-one / one-to-many is a relation where A contains multiple instances of B, but B contains only one instance of A.
-Let's take for example `User` and `Photo` entities.
-User can have multiple photos, but each photo is owned by only one single user.
+다대일 / 일대다는 A에 B의 여러 인스턴스가 포함되어 있지만 B에는 A의 인스턴스가 하나만 포함된 관계입니다.
+예를 들어 `User` 및 `Photo` 엔티티를 살펴 보겠습니다.
+사용자는 여러장의 사진을 가질 수 있지만 각 사진은 한명의 사용자만 소유합니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
@@ -10,16 +10,16 @@ import {User} from "./User";
 
 @Entity()
 export class Photo {
-    
+
     @PrimaryGeneratedColumn()
     id: number;
-    
+
     @Column()
     url: string;
-    
+
     @ManyToOne(() => User, user => user.photos)
     user: User;
-    
+
 }
 ```
 
@@ -29,26 +29,22 @@ import {Photo} from "./Photo";
 
 @Entity()
 export class User {
-    
+
     @PrimaryGeneratedColumn()
     id: number;
-    
+
     @Column()
     name: string;
-    
+
     @OneToMany(() => Photo, photo => photo.user)
     photos: Photo[];
-    
+
 }
 ```
 
-Here we added `@OneToMany` to the `photos` property and specified the target relation type to be `Photo`.
-You can omit `@JoinColumn` in a `@ManyToOne` / `@OneToMany` relation.
-`@OneToMany` cannot exist without `@ManyToOne`.
-If you want to use `@OneToMany`, `@ManyToOne` is required. However, the inverse is not required: If you only care about the `@ManyToOne` relationship, you can define it without having `@OneToMany` on the related entity.
-Where you set `@ManyToOne` - its related entity will have "relation id" and foreign key.
+여기서는 `photos` 속성에 `@OneToMany`를 추가하고 대상 관계 타입을 `Photo`로 지정했습니다. `@ManyToOne` / `@OneToMany` 관계에서 `@JoinColumn`을 생략할 수 있습니다. `@OneToMany`는 `@ManyToOne` 없이는 존재할 수 없습니다. `@OneToMany`를 사용하려면 `@ManyToOne`이 필요합니다. 그러나 그 반대는 필요하지 않습니다. `@ManyToOne` 관계만 신경 쓰는 경우 관련 엔터티에 `@OneToMany`없이 정의할 수 있습니다. `@ManyToOne`을 설정하는 경우 - 관련 엔티티에 "관계 ID"와 외래 키가 있습니다.
 
-This example will produce following tables:
+이 예제는 다음 테이블을 생성합니다.
 
 ```shell
 +-------------+--------------+----------------------------+
@@ -67,7 +63,7 @@ This example will produce following tables:
 +-------------+--------------+----------------------------+
 ```
 
-Example how to save such relation:
+이러한 관계를 저장하는 방법의 예:
 
 ```typescript
 const photo1 = new Photo();
@@ -84,7 +80,7 @@ user.photos = [photo1, photo2];
 await connection.manager.save(user);
 ```
 
-or alternatively you can do:
+또는 다음을 수행할 수 있습니다.
 
 ```typescript
 const user = new User();
@@ -102,21 +98,21 @@ photo2.user = user;
 await connection.manager.save(photo2);
 ```
 
-With [cascades](#/relations/cascades) enabled you can save this relation with only one `save` call.
+[캐스케이드](./relations.md#cascades)를 사용하면 `save` 호출을 한번만 사용하여 이 관계를 저장할 수 있습니다.
 
-To load a user with photos inside you must specify the relation in `FindOptions`:
- 
+내부에 사진이 있는 사용자를 로드하려면 `FindOptions`에서 관계를 지정해야합니다.
+
 ```typescript
 const userRepository = connection.getRepository(User);
 const users = await userRepository.find({ relations: ["photos"] });
 
-// or from inverse side
+// 또는 반대쪽에서
 
 const photoRepository = connection.getRepository(Photo);
 const photos = await photoRepository.find({ relations: ["user"] });
 ```
 
-Or using `QueryBuilder` you can join them:
+또는 `QueryBuilder`를 사용하여 조인할 수 있습니다.
 
 ```typescript
 const users = await connection
@@ -125,7 +121,7 @@ const users = await connection
     .leftJoinAndSelect("user.photos", "photo")
     .getMany();
 
-// or from inverse side
+// 또는 반대쪽에서
 
 const photos = await connection
     .getRepository(Photo)
@@ -134,4 +130,4 @@ const photos = await connection
     .getMany();
 ```
 
-With eager loading enabled on a relation you don't have to specify relation or join it - it will ALWAYS be loaded automatically.
+관계에 대해 즉시 로딩을 활성화하면 관계를 지정하거나 조인할 필요가 없습니다. 항상 자동으로 로드됩니다.

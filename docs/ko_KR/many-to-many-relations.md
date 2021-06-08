@@ -1,17 +1,16 @@
-# Many-to-many relations
+# 다대다 관계
 
- * [What are many-to-many relations](#what-are-many-to-many-relations)
- * [Saving many-to-many relations](#saving-many-to-many-relations)
- * [Deleting many-to-many relations](#deleting-many-to-many-relations)
- * [Loading many-to-many relations](#loading-many-to-many-relations)
- * [bi-directional relations](#bi-directional-relations)
- * [many-to-many relations with custom properties](#many-to-many-relations-with-custom-properties)
+- [다대다 관계란?](#다대다-관계란)
+- [다대다 관계 저장](#다대다-관계-저장)
+- [다대다 관계 삭제](#다대다-관계-삭제)
+- [캐스케이드가 있는 관계의 소프트 삭제](#캐스케이드가-있는-관계의-소프트-삭제)
+- [다대다 관계 로드](#다대다-관계-로드)
+- [양방향 관계](#양방향-관계)
+- [사용자 정의 속성을 사용한 다대다 관계](#사용자-정의-속성을-사용한-다대다-관계)
 
-## What are many-to-many relations
+## 다대다 관계란?
 
-Many-to-many is a relation where A contains multiple instances of B, and B contain multiple instances of A.
-Let's take for example `Question` and `Category` entities.
-A question can have multiple categories, and each category can have multiple questions.
+다대다는 A에 B의 여러 인스턴스가 포함되고 B에 A의 여러 인스턴스가 포함되는 관계입니다. 예를 들어 `Question` 및 `Category` 항목을 살펴 보겠습니다. 질문에는 여러 범주가 있을 수 있으며 각 범주에는 여러 질문이 있을 수 있습니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
@@ -51,10 +50,9 @@ export class Question {
 }
 ```
 
-`@JoinTable()` is required for `@ManyToMany` relations.
-You must put `@JoinTable` on one (owning) side of relation.
+`@ManyToMany` 관계에는 `@JoinTable()`이 필요합니다. 관계의 한쪽(소유)에 `@JoinTable`을 넣어야합니다.
 
-This example will produce following tables:
+이 예제는 다음 테이블을 생성합니다.
 
 ```shell
 +-------------+--------------+----------------------------+
@@ -80,9 +78,9 @@ This example will produce following tables:
 +-------------+--------------+----------------------------+
 ```
 
-## Saving many-to-many relations
+## 다대다 관계 저장
 
-With [cascades](./relations.md#cascades) enabled, you can save this relation with only one `save` call.
+[캐스케이드](./relations.md#cascades)를 사용 설정하면 `save` 호출을 한번만 사용하여 이 관계를 저장할 수 있습니다.
 
 ```typescript
 const category1 = new Category();
@@ -100,11 +98,11 @@ question.categories = [category1, category2];
 await connection.manager.save(question);
 ```
 
-## Deleting many-to-many relations
+## 다대다 관계 삭제
 
-With [cascades](./relations.md#cascades) enabled, you can delete this relation with only one `save` call.
+[캐스케이드](./relations.md#cascades)를 사용 설정하면 `save` 호출을 한번만 사용하여 이 관계를 삭제할 수 있습니다.
 
-To delete a many-to-many relationship between two records, remove it from the corresponding field and save the record.
+두 레코드간의 다대다 관계를 삭제하려면 해당 필드에서 제거하고 레코드를 저장하십시오.
 
 ```typescript
 const question = getRepository(Question);
@@ -114,11 +112,11 @@ question.categories = question.categories.filter(category => {
 await connection.manager.save(question)
 ```
 
-This will only remove the record in the join table. The `question` and `categoryToRemove` records will still exist.
+조인 테이블의 레코드만 제거됩니다. `question` 및 `categoryToRemove` 레코드는 계속 존재합니다.
 
-## Soft Deleting a relationship with cascade
+## 캐스케이드가 있는 관계의 소프트 삭제
 
-This example shows how the cascading soft delete behaves:
+이 예는 계단식 소프트 삭제가 어떻게 작동하는지 보여줍니다.
 
 ```typescript
 const category1 = new Category();
@@ -134,7 +132,7 @@ const newQuestion =  await connection.manager.save(question);
 await connection.manager.softRemove(newQuestion);
 ```
 
-In this example we did not call save or softRemove for category1 and category2, but they will be automatically saved and soft-deleted when the cascade of relation options is set to true like this:
+이 예에서는 `category1` 및 `category2`에 대해 `save` 또는 `softRemove`를 호출하지 않았지만 다음과 같이 `캐스케이드` 옵션이 `true`로 설정되면 자동으로 저장되고 일시 삭제됩니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable} from "typeorm";
@@ -155,16 +153,16 @@ export class Question {
 }
 ```
 
-## Loading many-to-many relations
+## 다대다 관계 로드
 
-To load questions with categories inside you must specify the relation in `FindOptions`:
+카테고리가 있는 질문을 로드하려면 `FindOptions`에서 관계를 지정해야 합니다.
 
 ```typescript
 const questionRepository = connection.getRepository(Question);
 const questions = await questionRepository.find({ relations: ["categories"] });
 ```
 
-Or using `QueryBuilder` you can join them:
+또는 `QueryBuilder`를 사용하여 조인할 수 있습니다.
 
 ```typescript
 const questions = await connection
@@ -174,15 +172,13 @@ const questions = await connection
     .getMany();
 ```
 
-When using `FindOptions` you don't need to specify eager relations - they are always automatically loaded.
+`FindOptions`를 사용할 때 즉시로딩(eager) 관계를 지정할 필요가 없습니다. 항상 자동으로 로드됩니다.
 
-## bi-directional relations
+## 양방향 관계
 
-Relations can be uni-directional and bi-directional.
-Uni-directional relations are relations with a relation decorator only on one side.
-Bi-directional relations are relations with decorators on both sides of a relation.
+관계는 단방향 및 양방향일 수 있습니다. 단방향 관계는 한쪽에서만 관계 데코레이터와의 관계입니다. 양방향 관계는 관계의 양쪽에 있는 데코레이터와의 관계입니다.
 
-We just created a uni-directional relation. Let's make it bi-directional:
+우리는 단방향 관계를 생성했습니다. 양방향으로 만들어 보겠습니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column, ManyToMany} from "typeorm";
@@ -226,10 +222,9 @@ export class Question {
 }
 ```
 
-We just made our relation bi-directional. Note that the inverse relation does not have a `@JoinTable`.
-`@JoinTable` must be only on one side of the relation.
+우리는 우리의 관계를 양방향으로 만들었습니다. 역 관계에는 `@JoinTable`이 없습니다. `@JoinTable`은 관계의 한쪽에만 있어야 합니다.
 
-Bi-directional relations allow you to join relations from both sides using `QueryBuilder`:
+양방향 관계를 사용하면 `QueryBuilder`를 사용하여 양쪽에서 관계를 결합할 수 있습니다.
 
 ```typescript
 const categoriesWithQuestions = await connection
@@ -239,10 +234,11 @@ const categoriesWithQuestions = await connection
     .getMany();
 ```
 
-## many-to-many relations with custom properties
+## 사용자 정의 속성을 사용한 다대다 관계
 
 In case you need to have additional properties in your many-to-many relationship, you have to create a new entity yourself.
 For example, if you would like entities `Post` and `Category` to have a many-to-many relationship with an additional `order` column, then you need to create an entity `PostToCategory` with two `ManyToOne` relations pointing in both directions and with custom columns in it:
+다대다 관계에 추가 속성이 필요한 경우 직접 새 엔터티를 만들어야합니다. 예를 들어 `Post` 및 `Category` 항목이 추가 `order` 컬럼과 다대다 관계를 갖도록 하려면 두개의 `ManyToOne` 관계가 가리키는 항목 `PostToCategory`를 생성해야합니다. 양방향 및 맞춤 컬럼 포함:
 
 ```typescript
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -271,7 +267,7 @@ export class PostToCategory {
 }
 ```
 
-Additionally you will have to add a relationship like the following to `Post` and `Category`:
+또한 `Post` 및 `Category`에 다음과 같은 관계를 추가해야합니다.
 
 ```typescript
 // category.ts

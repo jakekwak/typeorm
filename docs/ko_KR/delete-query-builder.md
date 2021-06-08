@@ -1,14 +1,15 @@
-# Delete using Query Builder
+# 쿼리 작성기를 사용하여 삭제
 
-* [Delete using Query Builder](#delete-using-query-builder)
-    * [`Delete`](#delete)
-    * [`Soft-Delete`](#soft-delete)
-    * [`Restore-Soft-Delete`](#restore-soft-delete)
+- [쿼리 작성기를 사용하여 삭제](#쿼리-작성기를-사용하여-삭제)
+    - [`Delete`](#delete)
+    - [`Soft-Delete`](#soft-delete)
+    - [`Restore-Soft-Delete`](#restore-soft-delete)
 
 ### `Delete`
 
-You can create `DELETE` queries using `QueryBuilder`.
-Examples:
+`QueryBuilder`를 사용하여 `DELETE` 쿼리를 만들 수 있습니다.
+
+예 :
 
 ```typescript
 import {getConnection} from "typeorm";
@@ -21,13 +22,13 @@ await getConnection()
     .execute();
 ```
 
-This is the most efficient way in terms of performance to delete entities from your database.
+데이터베이스에서 항목을 삭제하는 성능 측면에서 가장 효율적인 방법입니다.
 
 ---
 
 ### `Soft-Delete`
 
-Applying Soft Delete to QueryBuilder
+QueryBuilder에 소프트 삭제 적용
 
 ```typescript
 import {createConnection} from "typeorm";
@@ -45,7 +46,7 @@ createConnection(/*...*/).then(async connection => {
 
 ### `Restore-Soft-Delete`
 
-Alternatively, You can recover the soft deleted rows by using the `restore()` method:
+또는 `restore()` 메서드를 사용하여 일시 삭제된 행을 복구할 수 있습니다.
 
 ```typescript
 import {createConnection} from "typeorm";

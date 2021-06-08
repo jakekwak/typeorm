@@ -1,50 +1,47 @@
-# Working with Query Runner
+# 쿼리 실행기와 작업하기
 
-* [What is `QueryRunner`](#what-is-queryrunner)
-* [Creating a queryRunner](#creating-a-new-queryrunner)
-* [Using queryRunner](#using-queryrunner)
-* [Working with `QueryRunner`](#working-with-queryrunner)
-    
-## What is `QueryRunner`
+- [`QueryRunner`란?](#queryrunner란)
+- [새 queryRunner 만들기](#새-queryrunner-만들기)
+- [queryRunner 사용하기](#queryrunner-사용하기)
+- [`QueryRunner` 작업하기](#queryrunner-작업하기)
 
-Your interaction with the database is only possible once you setup a connection.
-TypeORM's `Connection` does not setup a database connection as it might seem, instead it sets up a connection pool.
-If you are interested in a real database connection, you should use `QueryRunner`.
-Each instance of `QueryRunner` is a separate isolated database connection. Using query runners you can control your queries to execute using single database connection and manually control your database transaction.
+## `QueryRunner`란?
 
-## Creating a new queryRunner
+데이터베이스와의 상호 작용은 연결을 설정한 후에 만 가능합니다. TypeORM의 `Connection`은 보이는 것처럼 데이터베이스 연결을 설정하지 않고 대신 연결 풀을 설정합니다. 실제 데이터베이스 연결에 관심이 있다면 `QueryRunner`를 사용해야합니다. `QueryRunner`의 각 인스턴스는 별도의 격리된 데이터베이스 연결입니다. 쿼리 실행기를 사용하면 단일 데이터베이스 연결을 사용하여 실행할 쿼리를 제어하고 데이터베이스 트랜잭션을 수동으로 제어할 수 있습니다.
 
-To create a new instance of `QueryRunner` you should first create a connection pool, in any of the ways described on the `Connection` documentation. Once a connection has established, use the `createQueryRunner` function to create an isolated connection.
+## 새 queryRunner 만들기
 
-`createQueryRunner` Creates a query runner used to perform queries on a single database connection.
- 
+`QueryRunner`의 새 인스턴스를 만들려면 먼저 `Connection` 설명서에 설명된 방법중 하나를 사용하여 연결 풀을 만들어야합니다. 연결이 설정되면 `createQueryRunner` 함수를 사용하여 격리된 연결을 만듭니다.
+
+`createQueryRunner` 단일 데이터베이스 연결에서 쿼리를 수행하는 데 사용되는 쿼리 실행기를 만듭니다.
+
 
 ```typescript
 import { getConnection, QueryRunner } from 'typeorm';
-// can be used once createConnection is called and is resolved
+// createConnection이 호출되고 해결되면 사용할 수 있습니다.
 const connection: Connection = getConnection();
 
 const queryRunner: QueryRunner = connection.createQueryRunner();
 ```
-## Using queryRunner
+## queryRunner 사용하기
 
-After creating an instance of `QueryRunner` use connect to activate the connection.
+`QueryRunner`의 인스턴스를 만든 후 connect를 사용하여 연결을 활성화합니다.
 
 ```typescript
 import { getConnection, QueryRunner } from 'typeorm';
-// can be used once createConnection is called and is resolved
+// createConnection이 호출되고 해결되면 사용할 수 있습니다.
 const connection: Connection = getConnection();
 
 const queryRunner: QueryRunner = connection.createQueryRunner();
 
-await queryRunner.connect(); // performs connection
+await queryRunner.connect(); // 연결을 수행
 ```
 
-Since the `QueryRunner` is used to manage an isolated database connection, make sure to release it when it is not needed anymore to make it available to the connection pool again. After connection is released it is not possible to use the query runner methods.
+`QueryRunner`는 격리된 데이터베이스 연결을 관리하는데 사용되므로 연결 풀에서 다시 사용할 수 있도록 더 이상 필요하지 않을 때 해제해야합니다. 연결이 해제된 후에는 쿼리 실행기 메서드를 사용할 수 없습니다.
 
-## Working with `QueryRunner`
+## `QueryRunner` 작업하기
 
-Once you set your queryRunner up, you can use it with an interface similar to the `Connection` interface:
+queryRunner를 설정하면 `Connection` 인터페이스와 유사한 인터페이스로 사용할 수 있습니다.
 
 ```typescript
 import { getConnection, QueryRunner } from 'typeorm';
@@ -55,17 +52,17 @@ export class UserController {
 
     @Get("/users")
     getAll(): Promise<User[]> {
-        // can be used once createConnection is called and is resolved
+        // createConnection이 호출되고 해결되면 사용할 수 있습니다.
         const connection: Connection = getConnection();
 
         const queryRunner: QueryRunner = connection.createQueryRunner();
 
-        await queryRunner.connect(); // performs connection
+        await queryRunner.connect(); // 연결을 수행
 
         const users = await queryRunner.manager.find(User);
-        
-        await queryRunner.release(); // release connection
-		
+
+        await queryRunner.release(); // 릴리스 연결
+
         return users;
     }
 

@@ -1,43 +1,39 @@
 # MongoDB
 
-* [MongoDB support](#mongodb-support)
-* [Defining entities and columns](#defining-entities-and-columns)
-* [Defining subdocuments (embed documents)](#defining-subdocuments-embed-documents)
-* [Using `MongoEntityManager` and `MongoRepository`](#using-mongoentitymanager-and-mongorepository)
+- [MongoDB 지원](#mongodb-지원)
+- [엔터티 및 컬럼 정의](#엔터티-및-컬럼-정의)
+- [하위 문서 정의 (임베디드 문서)](#하위-문서-정의-임베디드-문서)
+- [`MongoEntityManager` 및 `MongoRepository` 사용](#mongoentitymanager-및-mongorepository-사용)
 
-## MongoDB support
+## MongoDB 지원
 
-TypeORM has basic MongoDB support.
-Most of TypeORM functionality is RDBMS-specific, 
-this page contains all MongoDB-specific functionality documentation.
+TypeORM에는 기본 MongoDB 지원이 있습니다. 대부분의 TypeORM 기능은 RDBMS 전용이며 이 페이지에는 모든 MongoDB 전용 기능 문서가 포함되어 있습니다.
 
-## Defining entities and columns
+## 엔터티 및 컬럼 정의
 
-Defining entities and columns is almost the same as in relational databases, 
-the main difference is that you must use `@ObjectIdColumn` 
-instead of `@PrimaryColumn` or `@PrimaryGeneratedColumn`.
+엔터티와 컬럼을 정의하는 것은 관계형 데이터베이스에서와 거의 동일하지만, 주요 차이점은 `@PrimaryColumn` 또는 `@PrimaryGeneratedColumn` 대신 `@ObjectIdColumn`을 사용해야 한다는 것입니다.
 
-Simple entity example:
+간단한 엔티티 예:
 
 ```typescript
 import {Entity, ObjectID, ObjectIdColumn, Column} from "typeorm";
 
 @Entity()
 export class User {
-    
+
     @ObjectIdColumn()
     id: ObjectID;
-    
+
     @Column()
     firstName: string;
-    
+
     @Column()
     lastName: string;
-    
+
 }
 ```
 
-And this is how you bootstrap the app:
+그리고 이것이 앱을 부트스트랩하는 방법입니다.
 
 ```typescript
 import {createConnection, Connection} from "typeorm";
@@ -50,25 +46,24 @@ const connection: Connection = await createConnection({
 });
 ```
 
-## Defining subdocuments (embed documents)
+## 하위 문서 정의 (임베디드 문서)
 
-Since MongoDB stores objects and objects inside objects (or documents inside documents)
-you can do the same in TypeORM:
+MongoDB는 객체와 객체를 객체 내부(또는 문서 내부의 문서)에 저장하므로 TypeORM에서 동일한 작업을 수행할 수 있습니다.
 
 ```typescript
 import {Entity, ObjectID, ObjectIdColumn, Column} from "typeorm";
 
 export class Profile {
-    
+
     @Column()
     about: string;
-    
+
     @Column()
     education: string;
-    
+
     @Column()
     career: string;
-    
+
 }
 ```
 
@@ -76,22 +71,22 @@ export class Profile {
 import {Entity, ObjectID, ObjectIdColumn, Column} from "typeorm";
 
 export class Photo {
-    
+
     @Column()
     url: string;
-    
+
     @Column()
     description: string;
-    
+
     @Column()
     size: number;
-    
+
     constructor(url: string, description: string, size: number) {
         this.url = url;
         this.description = description;
         this.size = size;
     }
-    
+
 }
 ```
 
@@ -100,26 +95,26 @@ import {Entity, ObjectID, ObjectIdColumn, Column} from "typeorm";
 
 @Entity()
 export class User {
-    
+
     @ObjectIdColumn()
     id: ObjectID;
-    
+
     @Column()
     firstName: string;
-    
+
     @Column()
     lastName: string;
-    
+
     @Column(type => Profile)
     profile: Profile;
-    
+
     @Column(type => Photo)
     photos: Photo[];
-    
+
 }
 ```
 
-If you save this entity:
+이 엔티티를 저장하는 경우:
 
 ```typescript
 import {getMongoManager} from "typeorm";
@@ -140,7 +135,7 @@ const manager = getMongoManager();
 await manager.save(user);
 ```
 
-Following document will be saved in the database:
+다음 문서가 데이터베이스에 저장됩니다.
 
 ```json
 {
@@ -166,15 +161,16 @@ Following document will be saved in the database:
 }
 ```
 
-## Using `MongoEntityManager` and `MongoRepository`
+## `MongoEntityManager` 및 `MongoRepository` 사용
 
-You can use the majority of methods inside the `EntityManager` (except for RDBMS-specific, like `query` and `transaction`).
-For example:
+`EntityManager` 내에서 대부분의 메소드를 사용할 수 있습니다(`query` 및 `transaction`과 같은 RDBMS 전용 제외).
+
+예를 들면 :
 
 ```typescript
 import {getManager} from "typeorm";
 
-const manager = getManager(); // or connection.manager
+const manager = getManager(); // 또는 connection.manager
 const timber = await manager.findOne(User, { firstName: "Timber", lastName: "Saw" });
 ```
 
@@ -183,7 +179,7 @@ For MongoDB there is also a separate `MongoEntityManager` which extends `EntityM
 ```typescript
 import {getMongoManager} from "typeorm";
 
-const manager = getMongoManager(); // or connection.mongoManager
+const manager = getMongoManager(); // 또는 connection.mongoManager
 const timber = await manager.findOne(User, { firstName: "Timber", lastName: "Saw" });
 ```
 
@@ -192,11 +188,11 @@ Just like separate like `MongoEntityManager` there is a `MongoRepository` with e
 ```typescript
 import {getMongoRepository} from "typeorm";
 
-const userRepository = getMongoRepository(User); // or connection.getMongoRepository
+const userRepository = getMongoRepository(User); // 또는 connection.getMongoRepository
 const timber = await userRepository.findOne({ firstName: "Timber", lastName: "Saw" });
 ```
 
-Use Advanced options in find():
+find()에서 고급 옵션을 사용하십시오.
 
 Equal:
 
@@ -266,13 +262,13 @@ const timber = await userRepository.find({
 });
 ```
 
-Querying subdocuments
+하위 문서 쿼리
 
 ```typescript
 import {getMongoRepository} from "typeorm";
 
 const userRepository = getMongoRepository(User);
-// Query users with education Tree School
+// Education Tree School로 사용자 쿼리
 const users = await userRepository.find({
   where: {
    'profile.education': { $eq: "Tree School"}
@@ -280,7 +276,7 @@ const users = await userRepository.find({
 });
 ```
 
-Querying Array of subdocuments
+하위 문서 배열 쿼리
 
 ```typescript
 import {getMongoRepository} from "typeorm";
@@ -296,147 +292,144 @@ const users = await userRepository.find({
 ```
 
 
-Both `MongoEntityManager` and `MongoRepository` contain lot of useful MongoDB-specific methods:
+`MongoEntityManager`와 `MongoRepository`에는 유용한 MongoDB 관련 메서드가 많이 포함되어 있습니다.
 
 #### `createCursor`
 
-Creates a cursor for a query that can be used to iterate over results from MongoDB.
+MongoDB의 결과를 반복하는 데 사용할 수 있는 쿼리에 대한 커서를 만듭니다.
 
 #### `createEntityCursor`
 
-Creates a cursor for a query that can be used to iterate over results from MongoDB.
-This returns a modified version of the cursor that transforms each result into Entity models.
+MongoDB의 결과를 반복하는 데 사용할 수 있는 쿼리에 대한 커서를 만듭니다. 이는 각 결과를 엔티티 모델로 변환하는 수정된 버전의 커서를 리턴합니다.
 
 #### `aggregate`
 
-Execute an aggregation framework pipeline against the collection.
+컬렉션에 대해 집계 프레임워크 파이프라인을 실행합니다.
 
 #### `bulkWrite`
 
-Perform a bulkWrite operation without a fluent API.
+유창한 API없이 bulkWrite 작업을 수행하십시오.
 
 #### `count`
 
-Count number of matching documents in the db to a query.
+db에서 쿼리에 일치하는 문서 수를 계산합니다.
 
 #### `createCollectionIndex`
 
-Creates an index on the db and collection.
+db 및 컬렉션에 인덱스를 생성합니다.
 
 #### `createCollectionIndexes`
 
-Creates multiple indexes in the collection, this method is only supported in MongoDB 2.6 or higher.
-Earlier version of MongoDB will throw a command not supported error. Index specifications are defined at http://docs.mongodb.org/manual/reference/command/createIndexes/.
+컬렉션에 여러 인덱스를 생성합니다.이 방법은 MongoDB 2.6 이상에서만 지원됩니다. 이전 버전의 MongoDB에서는 지원되지 않는 명령 오류가 발생합니다. 색인 사양은 http://docs.mongodb.org/manual/reference/command/createIndexes/ 에 정의되어 있습니다.
 
 #### `deleteMany`
 
-Delete multiple documents on MongoDB.
+MongoDB에서 여러 문서를 삭제합니다.
 
 #### `deleteOne`
 
-Delete a document on MongoDB.
+MongoDB에서 문서를 삭제합니다.
 
 #### `distinct`
 
-The distinct command returns a list of distinct values for the given key across a collection.
+distinct 명령은 컬렉션 전체에서 지정된 키에 대한 고유값 목록을 반환합니다.
 
 #### `dropCollectionIndex`
 
-Drops an index from this collection.
+이 컬렉션에서 인덱스를 삭제합니다.
 
 #### `dropCollectionIndexes`
 
-Drops all indexes from the collection.
+컬렉션에서 모든 인덱스를 삭제합니다.
 
 #### `findOneAndDelete`
 
-Find a document and delete it in one atomic operation, requires a write lock for the duration of the operation.
+하나의 원자적(atomic) 작업으로 문서를 찾아서 삭제하고 작업 기간 동안 쓰기 잠금이 필요합니다.
 
 #### `findOneAndReplace`
 
-Find a document and replace it in one atomic operation, requires a write lock for the duration of the operation.
+문서를 찾아서 하나의 원자적(atomic) 작업으로 교체하고 작업 기간 동안 쓰기 잠금이 필요합니다.
 
 #### `findOneAndUpdate`
 
-Find a document and update it in one atomic operation, requires a write lock for the duration of the operation.
+문서를 찾아 하나의 원자적(atomic) 작업으로 업데이트하고 작업 기간 동안 쓰기 잠금이 필요합니다.
 
 #### `geoHaystackSearch`
 
-Execute a geo search using a geo haystack index on a collection.
+컬렉션에서 geo haystack 인덱스를 사용하여 지역 검색을 실행합니다.
 
 #### `geoNear`
 
-Execute the geoNear command to search for items in the collection.
+컬렉션에서 항목을 검색하려면 geoNear 명령을 실행합니다.
 
 #### `group`
 
-Run a group command across a collection.
+컬렉션에서 그룹 명령을 실행합니다.
 
 #### `collectionIndexes`
 
-Retrieve all the indexes on the collection.
+컬렉션의 모든 인덱스를 검색합니다.
 
 #### `collectionIndexExists`
 
-Retrieve if an index exists on the collection
+컬렉션에 인덱스가 있는지 검색
 
 #### `collectionIndexInformation`
 
-Retrieves this collections index info.
+이 컬렉션 인덱스 정보를 검색합니다.
 
 #### `initializeOrderedBulkOp`
 
-Initiate an In order bulk write operation, operations will be serially executed in the order they are added, creating a new operation for each switch in types.
+In order 대량 쓰기 작업을 시작하면 작업이 추가된 순서대로 순차적으로 실행되어 유형의 각 스위치에 대해 새 작업이 생성됩니다.
 
 #### `initializeUnorderedBulkOp`
 
-Initiate a Out of order batch write operation. All operations will be buffered into insert/update/remove commands executed out of order.
+비 순차 일괄 쓰기 작업을 시작합니다. 모든 작업은 순서없이 실행되는 삽입 / 업데이트 / 제거 명령에 버퍼링됩니다.
 
 #### `insertMany`
 
-Inserts an array of documents into MongoDB.
+MongoDB에 문서 배열을 삽입합니다.
 
 #### `insertOne`
 
-Inserts a single document into MongoDB.
+MongoDB에 단일 문서를 삽입합니다.
 
 #### `isCapped`
 
-Returns if the collection is a capped collection.
+컬렉션이 제한 컬렉션인 경우 반환합니다.
 
 #### `listCollectionIndexes`
 
-Get the list of all indexes information for the collection.
+컬렉션에 대한 모든 인덱스 정보 목록을 가져옵니다.
 
 #### `mapReduce`
 
-Run Map Reduce across a collection. Be aware that the inline option for out will return an array of results not a collection.
+컬렉션 전체에서 Map Reduce를 실행합니다. out에 대한 인라인 옵션은 컬렉션이 아닌 결과 배열을 반환합니다.
 
 #### `parallelCollectionScan`
 
-Return N number of parallel cursors for a collection allowing parallel reading of entire collection. There are no ordering guarantees for returned results
+전체 컬렉션의 병렬 읽기를 허용하는 컬렉션에 대해 N 개의 병렬 커서를 반환합니다. 반환된 결과에 대한 주문 보장이 없습니다.
 
 #### `reIndex`
 
-Reindex all indexes on the collection Warning: reIndex is a blocking operation (indexes are rebuilt in the foreground) and will be slow for large collections.
+컬렉션의 모든 인덱스 다시 색인화 경고: reIndex는 차단 작업(인덱스가 포그라운드에서 다시 작성됨)이며 대규모 컬렉션의 경우 속도가 느립니다.
 
 #### `rename`
 
-Changes the name of an existing collection.
+기존 컬렉션의 이름을 변경합니다.
 
 #### `replaceOne`
 
-Replace a document on MongoDB.
+MongoDB에서 문서를 바꿉니다.
 
 #### `stats`
 
-Get all the collection statistics.
+모든 수집 통계를 가져옵니다.
 
 #### `updateMany`
 
-Updates multiple documents within the collection based on the filter.
+필터를 기반으로 컬렉션내의 여러 문서를 업데이트합니다.
 
 #### `updateOne`
 
-Updates a single document within the collection based on the filter.
-
+필터를 기반으로 컬렉션내의 단일 문서를 업데이트합니다.

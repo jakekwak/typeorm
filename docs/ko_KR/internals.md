@@ -1,6 +1,6 @@
 # Internals
 
-This guide explains how things are working in TypeORM. 
-It will be useful for our contributors.
+이 가이드는 TypeORM에서 작동하는 방식을 설명합니다.
+기여자에게 유용할 것입니다.
 
-TBD. 
+미정.

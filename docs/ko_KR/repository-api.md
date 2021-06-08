@@ -1,40 +1,36 @@
 # Repository APIs
 
-* [Repository API](#repository-api)
-* [TreeRepository API](#treerepository-api)
-* [MongoRepository API](#mongorepository-api)
+- [`Repository` API](#repository-api)
+- [`TreeRepository` API](#treerepository-api)
+- [`MongoRepository` API](#mongorepository-api)
 
 ## `Repository` API
 
-* `manager` - The `EntityManager` used by this repository.
+* `manager` - 이 저장소에서 사용하는 `EntityManager`입니다.
 
 ```typescript
 const manager = repository.manager;
 ```
 
-* `metadata` - The `EntityMetadata` of the entity managed by this repository.
-Learn more about [transactions in Entity Metadata](./entity-metadata.md).
+* `metadata` - 이 저장소에서 관리하는 엔티티의 `EntityMetadata`입니다. [엔티티 메타데이터의 트랜잭션](./entity-metadata.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const metadata = repository.metadata;
 ```
 
-* `queryRunner` - The query runner used by `EntityManager`.
-Used only in transactional instances of EntityManager.
+* `queryRunner` - `EntityManager`에서 사용하는 쿼리 실행기입니다. EntityManager의 트랜잭션 인스턴스에서만 사용됩니다.
 
 ```typescript
 const queryRunner = repository.queryRunner;
 ```
 
-* `target` - The target entity class managed by this repository.
-Used only in transactional instances of EntityManager.
+* `target` - 이 저장소에서 관리하는 대상 엔티티 클래스입니다. EntityManager의 트랜잭션 인스턴스에서만 사용됩니다.
 
 ```typescript
 const target = repository.target;
 ```
 
-* `createQueryBuilder` - Creates a query builder use to build SQL queries.
-Learn more about [QueryBuilder](select-query-builder.md).
+* `createQueryBuilder` - SQL 쿼리를 작성하는데 사용할 쿼리 작성기를 만듭니다. [QueryBuilder](select-query-builder.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const users = await repository
@@ -43,7 +39,7 @@ const users = await repository
     .getMany();
 ```
 
-* `hasId` - Checks if the given entity's primary column property is defined.
+* `hasId` - 지정된 엔터티의 기본 컬럼 속성이 정의되었는지 확인합니다.
 
 ```typescript
  if (repository.hasId(user)) {
@@ -51,38 +47,31 @@ const users = await repository
  }
 ```
 
-* `getId` - Gets the primary column property values of the given entity.
-If entity has composite primary keys then the returned value will be an object with names and values of primary columns.
+* `getId` - 지정된 엔터티의 기본 컬럼 속성값을 가져옵니다. 엔터티에 복합 기본키가 있는 경우 반환된 값은 기본 컬럼의 이름과 값이 있는 객체가됩니다.
 
 ```typescript
 const userId = repository.getId(user); // userId === 1
 ```
 
-* `create` - Creates a new instance of `User`. Optionally accepts an object literal with user properties
-which will be written into newly created user object
+* `create` - `User`의 새 인스턴스를 만듭니다. 새로 생성된 사용자 객체에 기록될 사용자 속성이 있는 객체 리터럴을 선택적으로 허용합니다.
 
 ```typescript
-const user = repository.create(); // same as const user = new User();
+const user = repository.create(); // const user = new User();와 같음
 const user = repository.create({
     id: 1,
     firstName: "Timber",
     lastName: "Saw"
-}); // same as const user = new User(); user.firstName = "Timber"; user.lastName = "Saw";
+}); // const user = new User(); user.firstName = "Timber"; user.lastName = "Saw";와 같음
 ```
 
-* `merge` - Merges multiple entities into a single entity.
+* `merge` - 여러 항목을 단일 항목으로 병합합니다.
 
 ```typescript
 const user = new User();
-repository.merge(user, { firstName: "Timber" }, { lastName: "Saw" }); // same as user.firstName = "Timber"; user.lastName = "Saw";
+repository.merge(user, { firstName: "Timber" }, { lastName: "Saw" }); // user.firstName = "Timber"; user.lastName = "Saw";와 같음
 ```
 
-* `preload` - Creates a new entity from the given plain javascript object. If the entity already exists in the database, then
-it loads it (and everything related to it), replaces all values with the new ones from the given object,
-and returns the new entity. The new entity is actually an entity loaded from the database with all properties
-replaced from the new object. <br>
-Note that given entity-like object must have an entity id / primary key to find entity by.
-Returns undefined if entity with given id was not found.
+* `preload` - 주어진 일반 자바스크립트 객체에서 새 엔티티를 만듭니다. 엔터티가 데이터베이스에 이미 존재하는 경우 엔터티(및 이와 관련된 모든 항목)를 로드하고 모든 값을 지정된 개체의 새 값으로 바꾼 다음 새 엔터티를 반환합니다. 새 엔티티는 실제로 데이터베이스에서 로드된 엔티티이며 모든 속성이 새 객체에서 대체됩니다. 주어진 객체와 유사한 객체에는 객체를 찾기위한 객체 ID / 기본키가 있어야합니다. 주어진 ID를 가진 엔티티를 찾을 수 없는 경우 `undefined`를 반환합니다.
 
 ```typescript
 const partialUser = {
@@ -93,16 +82,11 @@ const partialUser = {
     }
 };
 const user = await repository.preload(partialUser);
-// user will contain all missing data from partialUser with partialUser property values:
+// user는 partialUser 속성 값이 있는 partialUser의 모든 누락된 데이터를 포함합니다.
 // { id: 1, firstName: "Rizzrak", lastName: "Saw", profile: { id: 1, ... } }
 ```
 
-* `save` - Saves a given entity or array of entities.
-If the entity already exist in the database, it is updated.
-If the entity does not exist in the database, it is inserted.
-It saves all given entities in a single transaction (in the case of entity, manager is not transactional).
-Also supports partial updating since all undefined properties are skipped.
-Returns the saved entity/entities.
+* `save` - 주어진 엔티티 또는 엔티티 배열을 저장합니다. 엔티티가 이미 데이터베이스에 있는 경우 업데이트됩니다. 엔터티가 데이터베이스에 없으면 삽입됩니다. 주어진 모든 엔티티를 단일 트랜잭션에 저장합니다(엔티티의 경우 관리자는 트랜잭션이 아님). 정의되지 않은 모든 속성을 건너뛰기 때문에 부분 업데이트도 지원합니다. 저장된 엔티티 / 엔티티들을 반환합니다.
 
 ```typescript
 await repository.save(user);
@@ -113,9 +97,7 @@ await repository.save([
 ]);
 ```
 
-* `remove` - Removes a given entity or array of entities.
-It removes all given entities in a single transaction (in the case of entity, manager is not transactional).
-Returns the removed entity/entities.
+* `remove` - 주어진 엔티티 또는 엔티티 배열을 제거합니다. 단일 트랜잭션에서 주어진 모든 엔티티를 제거합니다(엔티티의 경우 관리자가 트랜잭션이 아님). 제거된 엔티티 / 엔티티들을 반환합니다.
 
 ```typescript
 await repository.remove(user);
@@ -126,7 +108,7 @@ await repository.remove([
 ]);
 ```
 
-* `insert` - Inserts a new entity, or array of entities.
+* `insert` - 새 엔티티 또는 엔티티 배열을 삽입합니다.
 
 ```typescript
 await repository.insert({
@@ -144,17 +126,17 @@ await manager.insert(User, [{
 }]);
 ```
 
-* `update` - Partially updates entity by a given update options or entity id.
+* `update` - 주어진 업데이트 옵션 또는 엔티티 ID로 엔티티를 부분적으로 업데이트합니다.
 
 ```typescript
 await repository.update({ firstName: "Timber" }, { firstName: "Rizzrak" });
-// executes UPDATE user SET firstName = Rizzrak WHERE firstName = Timber
+// UPDATE user SET firstName = Rizzrak WHERE firstName = Timber 실행
 
 await repository.update(1, { firstName: "Rizzrak" });
-// executes UPDATE user SET firstName = Rizzrak WHERE id = 1
+// UPDATE user SET firstName = Rizzrak WHERE id = 1 실행
 ```
 
-* `delete` - Deletes entities by entity id, ids or given conditions:
+* `delete` - 엔티티 ID, ID 또는 주어진 조건으로 엔티티를 삭제합니다.
 
 ```typescript
 await repository.delete(1);
@@ -162,125 +144,122 @@ await repository.delete([1, 2, 3]);
 await repository.delete({ firstName: "Timber" });
 ```
 
-* `softDelete` and `restore` - Soft deleting and restoring a row by id
+* `softDelete` 와 `restore` - ID로 행을 소프트 삭제 및 복원
 
 ```typescript
 const repository = connection.getRepository(Entity);
-// Delete a entity
+// 항목 삭제
 await repository.softDelete(1);
-// And You can restore it using restore;
+// 그리고 복원을 사용하여 복원 할 수 있습니다.
 await repository.restore(1);
 ```
 
-* `softRemove` and `recover` - This is alternative to `softDelete` and `restore`.
+* `softRemove` 와 `recover` - 이것은 `softDelete` 및 `restore`의 대안입니다.
 ```typescript
-// You can soft-delete them using softRemove
+// softRemove를 사용하여 일시 삭제할 수 있습니다.
 const entities = await repository.find();
 const entitiesAfterSoftRemove = await repository.softRemove(entities);
 
-// And You can recover them using recover;
+// 그리고 복구를 사용하여 복구할 수 있습니다.
 await repository.recover(entitiesAfterSoftRemove);
 ```
 
 
-* `count` - Counts entities that match given options. Useful for pagination.
+* `count` - 주어진 옵션과 일치하는 엔티티를 계산합니다. 페이지 매김에 유용합니다.
 
 ```typescript
 const count = await repository.count({ firstName: "Timber" });
 ```
 
-* `increment` - Increments some column by provided value of entities that match given options.
+* `increment` - 주어진 옵션과 일치하는 엔티티의 제공된 값으로 일부 컬럼을 증가시킵니다.
 
 ```typescript
 await manager.increment(User, { firstName: "Timber" }, "age", 3);
 ```
 
-* `decrement` - Decrements some column by provided value that match given options.
+* `decrement` - 주어진 옵션과 일치하는 제공된 값으로 일부 컬럼을 줄입니다.
 ```typescript
 await manager.decrement(User, { firstName: "Timber" }, "age", 3);
 ```
 
-* `find` - Finds entities that match given options.
+* `find` - 주어진 옵션과 일치하는 엔티티를 찾습니다.
 
 ```typescript
 const timbers = await repository.find({ firstName: "Timber" });
 ```
 
-* `findAndCount` - Finds entities that match given find options.
-Also counts all entities that match given conditions,
-but ignores pagination settings (`skip` and `take` options).
+* `findAndCount` - 주어진 찾기 옵션과 일치하는 엔티티를 찾습니다. 또한 주어진 조건과 일치하는 모든 항목을 계산하지만 페이지 매김 설정(`skip` 및 `take` 옵션)을 무시합니다.
 
 ```typescript
 const [timbers, timbersCount] = await repository.findAndCount({ firstName: "Timber" });
 ```
 
-* `findByIds` - Finds multiple entities by id.
+* `findByIds` - ID로 여러 엔티티를 찾습니다.
 
 ```typescript
 const users = await repository.findByIds([1, 2, 3]);
 ```
 
-* `findOne` - Finds first entity that matches some id or find options.
+* `findOne` - 일부 ID 또는 찾기 옵션과 일치하는 첫번째 엔티티를 찾습니다.
 
 ```typescript
 const user = await repository.findOne(1);
 const timber = await repository.findOne({ firstName: "Timber" });
 ```
 
-* `findOneOrFail` - Finds the first entity that matches the some id or find options.
-Rejects the returned promise if nothing matches.
+* `findOneOrFail` - 일부 ID 또는 찾기 옵션과 일치하는 첫번째 엔티티를 찾습니다. 일치하는 것이 없으면 반환된 Promise를 거부합니다.
 
 ```typescript
 const user = await repository.findOneOrFail(1);
 const timber = await repository.findOneOrFail({ firstName: "Timber" });
 ```
 
->Note: It is strongly recommended to ensure that your `id` or `FindOptions` value is not `null` or `undefined` before calling `findOne` and `findOneOrFail`. When passed `null` or `undefined`, the query will match with every entity in the repository and return the first record.
+> 참고: `findOne` 및 `findOneOrFail`을 호출하기 전에 `id` 또는 `FindOptions` 값이 `null` 또는 `undefined`가 아닌지 확인하는 것이 좋습니다. `null`또는 `undefined`를 전달하면 쿼리가 저장소의 모든 항목과 일치하고 첫번째 레코드를 반환합니다.
 
-* `query` - Executes a raw SQL query.
+* `query` - 원시 SQL 쿼리를 실행합니다.
 
 ```typescript
 const rawData = await repository.query(`SELECT * FROM USERS`);
 ```
 
-* `clear` - Clears all the data from the given table (truncates/drops it).
+* `clear` - 주어진 테이블에서 모든 데이터를 지 웁니다 (잘라내기 / 삭제).
 
 ```typescript
 await repository.clear();
 ```
-### Additional Options
+### 추가 옵션
 
-Optional `SaveOptions` can be passed as parameter for `save`.
+선택적 `SaveOptions`는 `save`의 매개변수로 전달할 수 있습니다.
 
-* `data` -  Additional data to be passed with persist method. This data can be used in subscribers then.
-* `listeners`: boolean - Indicates if listeners and subscribers are called for this operation. By default they are enabled, you can disable them by setting `{ listeners: false }` in save/remove options.
-* `transaction`: boolean - By default transactions are enabled and all queries in persistence operation are wrapped into the transaction. You can disable this behaviour by setting `{ transaction: false }` in the persistence options.
-* `chunk`: number - Breaks save execution into multiple groups of chunks. For example, if you want to save 100.000 objects but you have issues with saving them, you can break them into 10 groups of 10.000 objects (by setting `{ chunk: 10000 }`) and save each group separately. This option is needed to perform very big insertions when you have issues with underlying driver parameter number limitation.
-* `reload`: boolean - Flag to determine whether the entity that is being persisted should be reloaded during the persistence operation. It will work only on databases which does not support RETURNING / OUTPUT statement. Enabled by default.
+* `data` -  persist 메소드로 전달할 추가 데이터입니다. 이 데이터는 가입자에게 사용될 수 있습니다.
+* `listeners`: boolean - 이 작업에 대해 리스너 및 구독자가 호출되는지 여부를 나타냅니다. 기본적으로 활성화되어 있으며 저장 / 제거 옵션에서 `{listeners: false}`를 설정하여 비활성화 할 수 있습니다.
+* `transaction`: boolean - 기본적으로 트랜잭션이 활성화되고 지속성 작업의 모든 쿼리가 트랜잭션으로 래핑됩니다. 지속성 옵션에서 `{transaction: false}`를 설정하여 이 동작을 비활성화 할 수 있습니다.
+* `chunk`: number - 저장 실행을 여러 청크 그룹으로 나눕니다. 예를 들어, 100,000 개의 객체를 저장하고 싶지만 저장하는데 문제가 있는 경우 10개 그룹의 10,000개 객체로 나누고(`{chunk: 10000}` 설정) 각 그룹을 개별적으로 저장할 수 있습니다. 이 옵션은 기본 드라이버 매개변수 번호 제한에 문제가 있을 때 매우 큰 삽입을 수행하는 데 필요합니다.
+* `reload`: boolean - 지속성 작업중에 지속되는 엔터티를 다시 로드해야 하는지 여부를 결정하는 플래그입니다. RETURNING / OUTPUT 문을 지원하지 않는 데이터베이스에서만 작동합니다. 기본적으로 활성화됩니다.
 
 Example:
 ```typescript
-// users contains array of User Entities
+// 사용자는 사용자 엔티티의 배열을 포함합니다.
 userRepository.save(users, {chunk: users.length / 1000});
 ```
 
-Optional `RemoveOptions` can be passed as parameter for `remove` and `delete`.
+선택적 `RemoveOptions`는 `remove` 및 `delete`의 매개변수로 전달할 수 있습니다.
 
-* `data` - Additional data to be passed with remove method. This data can be used in subscribers then.
-* `listener`: boolean - Indicates if listeners and subscribers are called for this operation. By default they are enabled, you can disable them by setting `{ listeners: false }` in save/remove options.
-* `transaction`: boolean - By default transactions are enabled and all queries in persistence operation are wrapped into the transaction. You can disable this behaviour by setting `{ transaction: false }` in the persistence options.
-* `chunk`: number - Breaks save execution into multiple groups of chunks. For example, if you want to save 100.000 objects but you have issues saving them, you can break them into 10 groups of 10.000 objects, by setting `{ chunk: 10000 }`, and save each group separately. This option is needed to perform very big insertions when you have issues with underlying driver parameter number limitation.
+* `data` - remove 메소드로 전달할 추가 데이터입니다. 이 데이터는 가입자에게 사용될 수 있습니다.
+* `listener`: boolean - 이 작업에 대해 리스너 및 구독자가 호출되는지 여부를 나타냅니다. 기본적으로 활성화되어 있으며 저장 / 제거 옵션에서 `{listeners: false}`를 설정하여 비활성화할 수 있습니다.
+* `transaction`: boolean - 기본적으로 트랜잭션이 활성화되고 지속성 작업의 모든 쿼리가 트랜잭션으로 래핑됩니다. 지속성 옵션에서 `{transaction: false}`를 설정하여 이 동작을 비활성화할 수 있습니다.
+* `chunk`: number - 저장 실행을 여러 청크 그룹으로 나눕니다. 예를 들어, 100,000개의 객체를 저장하고 싶지만 저장하는데 문제가 있는 경우 `{chunk: 10000}`를 설정하여 객체를 10,000개의 객체로 구성된 10개 그룹으로 나누고 각 그룹을 개별적으로 저장할 수 있습니다. 이 옵션은 기본 드라이버 매개변수 번호 제한에 문제가 있을 때 매우 큰 삽입을 수행하는데 필요합니다.
 
 Example:
 ```typescript
-// users contains array of User Entities
+// 사용자는 사용자 엔티티의 배열을 포함합니다.
 userRepository.remove(users, {chunk: entities.length / 1000});
 ```
 
 ## `TreeRepository` API
 
-For `TreeRepository` API refer to [the Tree Entities documentation](./tree-entities.md#working-with-tree-entities).
+`TreeRepository` API는 [트리 엔티티 문서](./tree-entities.md#트리-엔티티와-작업하기)를 참조하세요.
 
 ## `MongoRepository` API
 
-For `MongoRepository` API refer to [the MongoDB documentation](./mongodb.md).
+`MongoRepository` API는 [MongoDB 문서](./mongodb.md)를 참조하세요.

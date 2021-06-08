@@ -1,25 +1,24 @@
-# View Entities
+# 뷰 엔티티
 
-* [What is View Entity?](#what-is-view-entity)
-* [View Entity columns](#view-entity-columns)
-* [Complete example](#complete-example)
+- [뷰 엔티티란 무엇입니까?](#뷰-엔티티란-무엇입니까)
+- [뷰 엔티티 컬럼](#뷰-엔티티-컬럼)
+- [완전한 예](#완전한-예)
 
-## What is View Entity?
+## 뷰 엔티티란 무엇입니까?
 
-View entity is a class that maps to a database view.
-You can create a view entity by defining a new class and mark it with `@ViewEntity()`:
+뷰 엔터티는 데이터베이스 뷰에 매핑되는 클래스입니다. 새 클래스를 정의하고 `@ViewEntity()`로 표시하여 뷰 엔터티를 만들 수 있습니다.
 
-`@ViewEntity()` accepts following options:
+`@ViewEntity()` 다음 옵션을 허용합니다.
 
-* `name` - view name. If not specified, then view name is generated from entity class name.
-* `database` - database name in selected DB server.
-* `schema` - schema name.
-* `expression` - view definition. **Required parameter**.
+* `name` - 뷰 이름. 지정하지 않으면 엔티티 클래스 이름에서 뷰 이름이 생성됩니다.
+* `database` - 선택한 DB 서버의 데이터베이스 이름.
+* `schema` - 스키마 이름.
+* `expression` - 뷰 정의. **필수 매개 변수**.
 
-`expression` can be string with properly escaped columns and tables, depend on database used (postgres in example):
+`expression` 적절하게 이스케이프된 컬럼과 테이블이 있는 문자열일 수 있으며 사용된 데이터베이스에 따라 다름(예: postgres):
 
 ```typescript
-@ViewEntity({ 
+@ViewEntity({
     expression: `
         SELECT "post"."id" AS "id", "post"."name" AS "name", "category"."name" AS "categoryName"
         FROM "post" "post"
@@ -28,10 +27,10 @@ You can create a view entity by defining a new class and mark it with `@ViewEnti
 })
 ```
 
-or an instance of QueryBuilder
+또는 QueryBuilder의 인스턴스
 
 ```typescript
-@ViewEntity({ 
+@ViewEntity({
     expression: (connection: Connection) => connection.createQueryBuilder()
         .select("post.id", "id")
         .addSelect("post.name", "name")
@@ -41,22 +40,22 @@ or an instance of QueryBuilder
 })
 ```
 
-**Note:** parameter binding is not supported due to drivers limitations. Use the literal parameters instead.
+**참고:** 매개 변수 바인딩은 드라이버 제한으로 인해 지원되지 않습니다. 대신 리터럴 매개 변수를 사용하십시오.
 
 ```typescript
-@ViewEntity({ 
+@ViewEntity({
     expression: (connection: Connection) => connection.createQueryBuilder()
         .select("post.id", "id")
         .addSelect("post.name", "name")
         .addSelect("category.name", "categoryName")
         .from(Post, "post")
         .leftJoin(Category, "category", "category.id = post.categoryId")
-        .where("category.name = :name", { name: "Cars" })  // <-- this is wrong
-        .where("category.name = 'Cars'")                   // <-- and this is right
+        .where("category.name = :name", { name: "Cars" })  // <-- 이것은 틀렸습니다.
+        .where("category.name = 'Cars'")                   // <-- 그리고 이것은 옳습니다.
 })
 ```
 
-Each view entity must be registered in your connection options:
+각보기 엔티티는 연결 옵션에 등록되어야 합니다.
 
 ```typescript
 import {createConnection, Connection} from "typeorm";
@@ -73,7 +72,7 @@ const connection: Connection = await createConnection({
 });
 ```
 
-Or you can specify the whole directory with all entities inside - and all of them will be loaded:
+또는 모든 엔티티가 내부에 있는 전체 디렉토리를 지정할 수 있습니다. 그러면 모두 로드됩니다.
 
 ```typescript
 import {createConnection, Connection} from "typeorm";
@@ -89,17 +88,16 @@ const connection: Connection = await createConnection({
 });
 ```
 
-## View Entity columns
+## 뷰 엔티티 컬럼
 
-To map data from view into the correct entity columns you must mark entity columns with `@ViewColumn()`
-decorator and specify these columns as select statement aliases. 
+뷰의 데이터를 올바른 엔티티 컬럼으로 매핑하려면 `@ViewColumn()` 데코레이터로 엔티티 컬럼을 표시하고 이러한 컬럼을 select 문 별칭으로 지정해야합니다.
 
-example with string expression definition:
+문자열 표현식 정의가 있는 예 :
 
 ```typescript
 import {ViewEntity, ViewColumn} from "typeorm";
 
-@ViewEntity({ 
+@ViewEntity({
     expression: `
         SELECT "post"."id" AS "id", "post"."name" AS "name", "category"."name" AS "categoryName"
         FROM "post" "post"
@@ -120,12 +118,12 @@ export class PostCategory {
 }
 ```
 
-example using QueryBuilder:
+QueryBuilder를 사용한 예:
 
 ```typescript
 import {ViewEntity, ViewColumn} from "typeorm";
 
-@ViewEntity({ 
+@ViewEntity({
     expression: (connection: Connection) => connection.createQueryBuilder()
         .select("post.id", "id")
         .addSelect("post.name", "name")
@@ -147,9 +145,9 @@ export class PostCategory {
 }
 ```
 
-## Complete example
+## 완전한 예
 
-Let create two entities and a view containing aggregated data from these entities:
+두 개의 항목과 이러한 항목의 집계 데이터를 포함하는 뷰를 만들어 보겠습니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
@@ -192,7 +190,7 @@ export class Post {
 ```typescript
 import {ViewEntity, ViewColumn, Connection} from "typeorm";
 
-@ViewEntity({ 
+@ViewEntity({
     expression: (connection: Connection) => connection.createQueryBuilder()
         .select("post.id", "id")
         .addSelect("post.name", "name")
@@ -214,7 +212,7 @@ export class PostCategory {
 }
 ```
 
-then fill these tables with data and request all data from PostCategory view:
+그런 다음 이러한 테이블을 데이터로 채우고 PostCategory 뷰에서 모든 데이터를 요청합니다.
 
 ```typescript
 import {getManager} from "typeorm";
@@ -246,17 +244,15 @@ const postCategories = await entityManager.find(PostCategory);
 const postCategory = await entityManager.findOne(PostCategory, { id: 1 });
 ```
 
-the result in `postCategories` will be:
+`postCategories`의 결과는 다음과 같습니다.
 
 ```
 [ PostCategory { id: 1, name: 'About BMW', categoryName: 'Cars' },
   PostCategory { id: 2, name: 'About Boeing', categoryName: 'Airplanes' } ]
 ```
 
-and in `postCategory`:
+그리고 `postCategory`에서 :
 
 ```
 PostCategory { id: 1, name: 'About BMW', categoryName: 'Cars' }
 ```
-
-

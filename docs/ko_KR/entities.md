@@ -2,26 +2,32 @@
 
 # Entities
 
-* [What is Entity?](#what-is-entity)
-* [Entity columns](#entity-columns)
-  * [Primary columns](#primary-columns)
-  * [Special columns](#special-columns)
-  * [Spatial columns](#spatial-columns)
-* [Column types](#column-types)
-  * [Column types for `mysql` / `mariadb`](#column-types-for-mysql--mariadb)
-  * [Column types for `postgres` / `cockroachdb`](#column-types-for-postgres)
-  * [Column types for `sqlite` / `cordova` / `react-native` / `expo`](#column-types-for-sqlite--cordova--react-native--expo)
-  * [Column types for `mssql`](#column-types-for-mssql)
-  * [`enum` column type](#enum-column-type)
-  * [`simple-array` column type](#simple-array-column-type)
-  * [`simple-json` column type](#simple-json-column-type)
-  * [Columns with generated values](#columns-with-generated-values)
-* [Column options](#column-options)
+- [엔티티 란?](#엔티티-란)
+- [엔티티 컬럼](#엔티티-컬럼)
+  - [기본 컬럼(Primary Columns)](#기본-컬럼primary-columns)
+  - [특수 컬럼](#특수-컬럼)
+  - [공간 컬럼(Spatial Columns)](#공간-컬럼spatial-columns)
+- [컬럼 타입](#컬럼-타입)
+  - [`mysql` / `mariadb`의 컬럼 타입](#mysql--mariadb의-컬럼-타입)
+  - [`postgres`의 컬럼 타입](#postgres의-컬럼-타입)
+  - [`cockroachdb`의 컬럼 타입](#cockroachdb의-컬럼-타입)
+  - [`sqlite` / `cordova` / `react-native` / `expo`의 컬럼 타입](#sqlite--cordova--react-native--expo의-컬럼-타입)
+  - [`mssql`의 컬럼 타입](#mssql의-컬럼-타입)
+  - [`oracle`의 컬럼 타입](#oracle의-컬럼-타입)
+  - [`enum` 컬럼 타입](#enum-컬럼-타입)
+  - [`set` 컬럼 타입](#set-컬럼-타입)
+  - [`simple-array` 컬럼 타입](#simple-array-컬럼-타입)
+  - [`simple-json` 컬럼 타입](#simple-json-컬럼-타입)
+  - [생성된 값이 있는 컬럼](#생성된-값이-있는-컬럼)
+- [컬럼 옵션](#컬럼-옵션)
+- [엔티티 상속](#엔티티-상속)
+- [트리 엔티티](#트리-엔티티)
+  - [인접 목록(Adjacency list)](#인접-목록adjacency-list)
+  - [클로저 테이블](#클로저-테이블)
 
-## What is Entity?
+## 엔티티 란?
 
-Entity is a class that maps to a database table (or collection when using MongoDB).
-You can create an entity by defining a new class and mark it with `@Entity()`:
+엔티티는 데이터베이스 테이블(또는 MongoDB를 사용하는 경우 컬렉션)에 매핑되는 클래스입니다. 새 클래스를 정의하여 엔티티를 만들고 `@Entity()`로 표시할 수 있습니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
@@ -44,7 +50,7 @@ export class User {
 }
 ```
 
-This will create following database table:
+그러면 다음 데이터베이스 테이블이 생성됩니다.
 
 ```shell
 +-------------+--------------+----------------------------+
@@ -57,10 +63,9 @@ This will create following database table:
 +-------------+--------------+----------------------------+
 ```
 
-Basic entities consist of columns and relations.
-Each entity **MUST** have a primary column (or ObjectId column if are using MongoDB).
+기본 엔터티는 열과 관계로 구성됩니다. 각 엔터티에는 기본 컬럼(또는 MongoDB를 사용하는 경우 ObjectId 컬럼)이 있어야 합니다(**MUST**).
 
-Each entity must be registered in your connection options:
+각 엔티티는 연결 옵션에 등록되어야합니다.
 
 ```typescript
 import {createConnection, Connection} from "typeorm";
@@ -77,7 +82,7 @@ const connection: Connection = await createConnection({
 });
 ```
 
-Or you can specify the whole directory with all entities inside - and all of them will be loaded:
+또는 모든 엔티티가 내부에 있는 전체 디렉토리를 지정할 수 있습니다. 그러면 모두 로드됩니다.
 
 ```typescript
 import {createConnection, Connection} from "typeorm";
@@ -93,24 +98,21 @@ const connection: Connection = await createConnection({
 });
 ```
 
-If you want to use an alternative table name for the `User` entity you can specify it in `@Entity`: `@Entity("my_users")`.
-If you want to set a base prefix for all database tables in your application you can specify `entityPrefix` in connection options.
+`User` 엔터티에 대해 대체 테이블 이름을 사용하려면 `@Entity`: `@Entity("my_users")`에 지정할 수 있습니다. 애플리케이션의 모든 데이터베이스 테이블에 기본 접두사를 설정하려면 연결 옵션에서 `entityPrefix`를 지정할 수 있습니다.
 
-When using an entity constructor its arguments **must be optional**. Since ORM creates instances of entity classes when loading from the database, therefore it is not aware of your constructor arguments.
+엔티티 생성자를 사용할 때 인수는 **선택 사항이어야 합니다**. ORM은 데이터베이스에서 로드할 때 엔티티 클래스의 인스턴스를 생성하므로 생성자 인수를 인식하지 못합니다.
 
-Learn more about parameters `@Entity` in [Decorators reference](decorator-reference.md).
+[데코레이터 참조](./decorator-reference.md)에서 `@Entity` 매개변수에 대해 자세히 알아보세요.
 
-## Entity columns
+## 엔티티 컬럼
 
-Since database tables consist of columns your entities must consist of columns too.
-Each entity class property you marked with `@Column` will be mapped to a database table column.
+데이터베이스 테이블은 컬럼으로 구성되므로 엔티티도 컬럼으로 구성되어야합니다. `@Column`으로 표시한 각 엔티티 클래스 속성은 데이터베이스 테이블 칼럼에 매핑됩니다.
 
-### Primary columns
+### 기본 컬럼(Primary Columns)
 
-Each entity must have at least one primary column.
-There are several types of primary columns:
+각 항목에는 하나 이상의 기본 컬럼이 있어야합니다. 여러 타입의 기본 컬럼이 있습니다.
 
-* `@PrimaryColumn()` creates a primary column which takes any value of any type. You can specify the column type. If you don't specify a column type it will be inferred from the property type. The example below will create id with `int` as type which you must manually assign before save.
+* `@PrimaryColumn()` 모든 타입의 값을 취하는 기본 컬럼을 만듭니다. 컬럼 타입을 지정할 수 있습니다. 컬럼 타입을 지정하지 않으면 속성 타입에서 유추됩니다. 아래 예제는 저장하기 전에 수동으로 할당해야 하는 타입으로 `int`를 사용하여 id를 생성합니다.
 
 ```typescript
 import {Entity, PrimaryColumn} from "typeorm";
@@ -125,7 +127,7 @@ export class User {
 }
 ```
 
-* `@PrimaryGeneratedColumn()` creates a primary column which value will be automatically generated with an auto-increment value. It will create `int` column with `auto-increment`/`serial`/`sequence` (depend on the database). You don't have to manually assign its value before save - value will be automatically generated.
+* `@PrimaryGeneratedColumn()` 값이 자동 증가 값으로 자동 생성되는 기본 컬럼을 만듭니다. `auto-increment` / `serial` / `sequence` (데이터베이스에 따라 다름)로 `int` 컬럼을 생성합니다. 저장하기 전에 값을 수동으로 할당할 필요가 없습니다. 값이 자동으로 생성됩니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn} from "typeorm";
@@ -140,7 +142,7 @@ export class User {
 }
 ```
 
-* `@PrimaryGeneratedColumn("uuid")` creates a primary column which value will be automatically generated with `uuid`. Uuid is a unique string id. You don't have to manually assign its value before save - value will be automatically generated.
+* `@PrimaryGeneratedColumn("uuid")` 값이 `uuid`로 자동 생성되는 기본 컬럼을 만듭니다. Uuid는 고유한 문자열 ID입니다. 저장하기 전에 값을 수동으로 할당할 필요가 없습니다. 값이 자동으로 생성됩니다.
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn} from "typeorm";
@@ -155,7 +157,7 @@ export class User {
 }
 ```
 
-You can have composite primary columns as well:
+복합 기본 컬럼도 가질 수 있습니다.
 
 ```typescript
 import {Entity, PrimaryColumn} from "typeorm";
@@ -172,61 +174,43 @@ export class User {
 }
 ```
 
-When you save entities using `save` it always tries to find an entity in the database with the given entity id (or ids).
-If id/ids are found then it will update this row in the database.
-If there is no row with the id/ids, a new row will be inserted.
+`save`를 사용하여 항목을 저장하면 항상 주어진 항목 ID(또는 ID)를 사용하여 데이터베이스에서 항목을 찾으려고합니다. ID/IDs가 발견되면 데이터베이스에서 이 행을 업데이트합니다. ID/IDs가 있는 행이 없으면 새 행이 삽입됩니다.
 
-To find an entity by id you can use `manager.findOne` or `repository.findOne`. Example:
+ID로 엔티티를 찾으려면`manager.findOne` 또는`repository.findOne`을 사용할 수 있습니다. 예:
 
 ```typescript
-// find one by id with single primary key
+// 단일 기본 키로 ID로 하나 찾기
 const person = await connection.manager.findOne(Person, 1);
 const person = await connection.getRepository(Person).findOne(1);
 
-// find one by id with composite primary keys
+// 복합 기본 키로 ID로 하나 찾기
 const user = await connection.manager.findOne(User, { firstName: "Timber", lastName: "Saw" });
 const user = await connection.getRepository(User).findOne({ firstName: "Timber", lastName: "Saw" });
 ```
 
-### Special columns
+### 특수 컬럼
 
-There are several special column types with additional functionality available:
+추가 기능을 사용할 수 있는 몇가지 특수 컬럼 타입이 있습니다.
 
 
-* `@CreateDateColumn` is a special column that is automatically set to the entity's insertion date.
-You don't need to set this column - it will be automatically set.
+* `@CreateDateColumn`은 엔티티 삽입 날짜로 자동 설정되는 특수 컬럼입니다. 이 컬럼은 설정할 필요가 없습니다. 자동으로 설정됩니다.
 
-* `@UpdateDateColumn` is a special column that is automatically set to the entity's update time 
-each time you call `save` of entity manager or repository.
-You don't need to set this column - it will be automatically set.
+* `@UpdateDateColumn`은 엔티티 관리자 또는 저장소의 `save`를 호출할 때마다 엔티티의 업데이트 시간으로 자동 설정되는 특수 컬럼입니다. 이 컬럼은 설정할 필요가 없습니다. 자동으로 설정됩니다.
 
-* `@DeleteDateColumn` is a special column that is automatically set to the entity's delete time each time you call soft-delete of entity manager or repository. You don't need to set this column - it will be automatically set. If the @DeleteDateColumn is set, the default scope will be "non-deleted".
+* `@DeleteDateColumn`은 엔티티 관리자 또는 저장소의 소프트 삭제를 호출할 때마다 엔티티의 삭제 시간으로 자동 설정되는 특수 컬럼입니다. 이 컬럼은 설정할 필요가 없습니다. 자동으로 설정됩니다. @DeleteDateColumn이 설정된 경우 기본 범위는 "삭제되지 않음"입니다.
 
-* `@VersionColumn` is a special column that is automatically set to the version of the entity (incremental number)  
-each time you call `save` of entity manager or repository.
-You don't need to set this column - it will be automatically set.
+* `@VersionColumn` 엔티티 관리자 또는 저장소의 `save`을 호출할 때마다 엔티티 버전(증분 번호)으로 자동 설정되는 특수 컬럼입니다. 이 컬럼은 설정할 필요가 없습니다. 자동으로 설정됩니다.
 
-### Spatial columns
+### 공간 컬럼(Spatial Columns)
 
-MS SQL, MySQL / MariaDB, and PostgreSQL all support spatial columns. TypeORM's
-support for each varies slightly between databases, particularly as the column
-names vary between databases.
+MS SQL, MySQL / MariaDB 및 PostgreSQL은 모두 공간 컬럼을 지원합니다. TypeORM의
+각각에 대한 지원은 특히 컬럼에 따라 데이터베이스마다 약간씩 다릅니다. 이름은 데이터베이스마다 다릅니다.
 
-MS SQL and MySQL / MariaDB's TypeORM support exposes (and expects) geometries to
-be provided as [well-known text
-(WKT)](https://en.wikipedia.org/wiki/Well-known_text), so geometry columns
-should be tagged with the `string` type.
+MS SQL 및 MySQL / MariaDB의 TypeORM 지원은 도형이 [잘 알려진 텍스트로 제공 될 것으로 예상합니다.(WKT)](https://en.wikipedia.org/wiki/Well-known_text)이므로 도형(geometry) 컬럼에는 `string` 타입으로 태그를 지정해야합니다.
 
-TypeORM's PostgreSQL support uses [GeoJSON](http://geojson.org/) as an
-interchange format, so geometry columns should be tagged either as `object` or
-`Geometry` (or subclasses, e.g. `Point`) after importing [`geojson`
-types](https://www.npmjs.com/package/@types/geojson).
+TypeORM의 PostgreSQL 지원은 [GeoJSON](http://geojson.org/)을 교환 형식으로 사용하므로 [`geojson` 타입](https://www.npmjs.com/package/@types/geojson)를 가져온 후 도형 컬럼에 `object`또는 `Geometry`(또는 하위 클래스, 예: `Point`)로 태그를 지정해야합니다.
 
-TypeORM tries to do the right thing, but it's not always possible to determine
-when a value being inserted or the result of a PostGIS function should be
-treated as a geometry. As a result, you may find yourself writing code similar
-to the following, where values are converted into PostGIS `geometry`s from
-GeoJSON and into GeoJSON as `json`:
+TypeORM은 옳은 일을하려고 하지만 언제 값이 삽입되는지 또는 PostGIS 함수의 결과가 지오메트리로 처리되어야 하는지를 항상 결정할 수 있는 것은 아닙니다. 결과적으로 값이 GeoJSON에서 PostGIS `지오메트리`로 변환되고 `json`으로 GeoJSON으로 변환되는 다음과 유사한 코드를 작성할 수 있습니다.
 
 ```typescript
 const origin = {
@@ -236,8 +220,7 @@ const origin = {
 
 await getManager()
     .createQueryBuilder(Thing, "thing")
-    // convert stringified GeoJSON into a geometry with an SRID that matches the
-    // table specification
+    // 문자열화 된 GeoJSON을 테이블 사양과 일치하는 SRID를 가진 지오메트리로 변환
     .where("ST_Distance(geom, ST_SetSRID(ST_GeomFromGeoJSON(:origin), ST_SRID(geom))) > 0")
     .orderBy({
         "ST_Distance(geom, ST_SetSRID(ST_GeomFromGeoJSON(:origin), ST_SRID(geom)))": {
@@ -245,55 +228,53 @@ await getManager()
         }
     })
     .setParameters({
-      // stringify GeoJSON
+      // GeoJSON 문자열화
       origin: JSON.stringify(origin)
     })
     .getMany();
 
 await getManager()
     .createQueryBuilder(Thing, "thing")
-    // convert geometry result into GeoJSON, treated as JSON (so that TypeORM
-    // will know to deserialize it)
+    // 지오메트리 결과를 GeoJSON으로 변환하고 JSON으로 처리
+    // (TypeORM이 이를 역 직렬화하도록 알 수 있음)
     .select("ST_AsGeoJSON(ST_Buffer(geom, 0.1))::json geom")
     .from("thing")
     .getMany();
 ```
 
 
-## Column types
+## 컬럼 타입
 
-TypeORM supports all of the most commonly used database-supported column types.
-Column types are database-type specific - this provides more flexibility on how your database schema will look like.
+TypeORM은 가장 일반적으로 사용되는 모든 데이터베이스 지원 컬럼 타입을 지원합니다. 컬럼 타입은 데이터베이스 타입에 따라 다릅니다. 이는 데이터베이스 스키마의 모양에 대해 더 많은 유연성을 제공합니다.
 
-You can specify column type as first parameter of `@Column`
-or in the column options of `@Column`, for example:
+컬럼 타입을 `@Column`의 첫번째 매개 변수로 지정하거나 `@Column`의 컬럼 옵션에 지정할 수 있습니다. 예를 들면 다음과 같습니다.
 
 ```typescript
 @Column("int")
 ```
 
-or
+또는
 
 ```typescript
 @Column({ type: "int" })
 ```
 
-If you want to specify additional type parameters you can do it via column options.
-For example:
+추가 타입 매개변수를 지정하려면 컬럼 옵션을 통해 수행할 수 있습니다.
+예를 들면:
 
 ```typescript
 @Column("varchar", { length: 200 })
 ```
 
-or
+또는
 
 ```typescript
 @Column({ type: "int", width: 200 })
 ```
 
-> Note about `bigint` type: `bigint` column type, used in SQL databases, doesn't fit into the regular `number` type and maps property to a `string` instead.
+> `bigint` 타입에 대한 참고사항: SQL 데이터베이스에서 사용되는 `bigint` 컬럼 타입은 일반 `number` 타입에 맞지 않고 대신 `string`에 속성을 매핑합니다.
 
-### Column types for `mysql` / `mariadb`
+### `mysql` / `mariadb`의 컬럼 타입
 
 `bit`, `int`, `integer`, `tinyint`, `smallint`, `mediumint`, `bigint`, `float`, `double`,
 `double precision`, `dec`, `decimal`, `numeric`, `fixed`, `bool`, `boolean`, `date`, `datetime`,
@@ -302,7 +283,7 @@ or
 `json`, `binary`, `varbinary`, `geometry`, `point`, `linestring`, `polygon`, `multipoint`, `multilinestring`,
 `multipolygon`, `geometrycollection`
 
-### Column types for `postgres`
+### `postgres`의 컬럼 타입
 
 `int`, `int2`, `int4`, `int8`, `smallint`, `integer`, `bigint`, `decimal`, `numeric`, `real`,
 `float`, `float4`, `float8`, `double precision`, `money`, `character varying`, `varchar`,
@@ -313,7 +294,7 @@ or
 `tsvector`, `tsquery`, `uuid`, `xml`, `json`, `jsonb`, `int4range`, `int8range`, `numrange`,
 `tsrange`, `tstzrange`, `daterange`, `geometry`, `geography`, `cube`, `ltree`
 
-### Column types for `cockroachdb`
+### `cockroachdb`의 컬럼 타입
 
 `array`, `bool`, `boolean`, `bytes`, `bytea`, `blob`, `date`, `numeric`, `decimal`, `dec`, `float`,
 `float4`, `float8`, `double precision`, `real`, `inet`, `int`, `integer`, `int2`, `int8`, `int64`,
@@ -325,32 +306,33 @@ or
  `number` ORM will `parseInt` string into number.
 
 
-### Column types for `sqlite` / `cordova` / `react-native` / `expo`
+### `sqlite` / `cordova` / `react-native` / `expo`의 컬럼 타입
 
 `int`, `int2`, `int8`, `integer`, `tinyint`, `smallint`, `mediumint`, `bigint`, `decimal`,
 `numeric`, `float`, `double`, `real`, `double precision`, `datetime`, `varying character`,
 `character`, `native character`, `varchar`, `nchar`, `nvarchar2`, `unsigned big int`, `boolean`,
 `blob`, `text`, `clob`, `date`
 
-### Column types for `mssql`
+### `mssql`의 컬럼 타입
 
 `int`, `bigint`, `bit`, `decimal`, `money`, `numeric`, `smallint`, `smallmoney`, `tinyint`, `float`,
 `real`, `date`, `datetime2`, `datetime`, `datetimeoffset`, `smalldatetime`, `time`, `char`, `varchar`,
 `text`, `nchar`, `nvarchar`, `ntext`, `binary`, `image`, `varbinary`, `hierarchyid`, `sql_variant`,
 `timestamp`, `uniqueidentifier`, `xml`, `geometry`, `geography`, `rowversion`
 
-### Column types for `oracle`
+### `oracle`의 컬럼 타입
 
 `char`, `nchar`, `nvarchar2`, `varchar2`, `long`, `raw`, `long raw`, `number`, `numeric`, `float`, `dec`,
 `decimal`, `integer`, `int`, `smallint`, `real`, `double precision`, `date`, `timestamp`, `timestamp with time zone`,
 `timestamp with local time zone`, `interval year to month`, `interval day to second`, `bfile`, `blob`, `clob`,
 `nclob`, `rowid`, `urowid`
 
-### `enum` column type
+### `enum` 컬럼 타입
 
-`enum` column type is supported by `postgres` and `mysql`. There are various possible column definitions:
+`enum` 컬럼 유형은 `postgres` 및 `mysql`에서 지원됩니다. 가능한 다양한 컬럼 정의가 있습니다.
 
-Using typescript enums:
+typescript 열거형 사용:
+
 ```typescript
 export enum UserRole {
     ADMIN = "admin",
@@ -373,9 +355,10 @@ export class User {
 
 }
 ```
-> Note: String, numeric and heterogeneous enums are supported.
+> 참고 : 문자열, 숫자 및 이기종 열거형이 지원됩니다.
 
-Using array with enum values:
+열거형 값과 함께 배열 사용:
+
 ```typescript
 export type UserRoleType = "admin" | "editor" | "ghost",
 
@@ -394,11 +377,12 @@ export class User {
 }
 ```
 
-### `set` column type
+### `set` 컬럼 타입
 
-`set` column type is supported by `mariadb` and `mysql`. There are various possible column definitions:
+`set` 컬럼 타입은 `mariadb` 및 `mysql`에서 지원됩니다. 가능한 다양한 컬럼 정의가 있습니다.
 
-Using typescript enums:
+typescript 열거형 사용:
+
 ```typescript
 export enum UserRole {
     ADMIN = "admin",
@@ -422,7 +406,8 @@ export class User {
 }
 ```
 
-Using array with `set` values:
+`set` 값이 있는 배열 사용:
+
 ```typescript
 export type UserRoleType = "admin" | "editor" | "ghost",
 
@@ -441,10 +426,9 @@ export class User {
 }
 ```
 
-### `simple-array` column type
+### `simple-array` 컬럼 타입
 
-There is a special column type called `simple-array` which can store primitive array values in a single string column.
-All values are separated by a comma. For example:
+단일 문자열 열에 기본 배열 값을 저장할 수 있는 `simple-array`이라는 특수 컬럼 타입이 있습니다. 모든 값은 쉼표로 구분됩니다. 예를 들면 :
 
 ```typescript
 @Entity()
@@ -469,19 +453,15 @@ user.names = [
 ];
 ```
 
-Will be stored in a single database column as `Alexander,Alex,Sasha,Shurik` value.
-When you'll load data from the database, the names will be returned as an array of names,
-just like you stored them.
+단일 데이터베이스 열에 `Alexander, Alex, Sasha, Shurik`값으로 저장됩니다. 데이터베이스에서 데이터를 로드할 때 이름은 저장 한 것처럼 이름 배열로 반환됩니다.
 
-Note you **MUST NOT** have any comma in values you write.
+작성하는 값에는 쉼표가 **없어야 합니다**.
 
-### `simple-json` column type
+### `simple-json` 컬럼 타입
 
-There is a special column type called `simple-json` which can store any values which can be stored in database
-via JSON.stringify.
-Very useful when you do not have json type in your database and you want to store and load object
-without any hassle.
-For example:
+JSON.stringify를 통해 데이터베이스에 저장할 수 있는 모든 값을 저장할 수 있는 `simple-json`이라는 특수 컬럼 타입이 있습니다. 데이터베이스에 json 타입이 없고 번거로움 없이 객체를 저장하고 로드하려는 경우 매우 유용합니다.
+
+예를 들면 :
 
 ```typescript
 @Entity()
@@ -501,12 +481,11 @@ const user = new User();
 user.profile = { name: "John", nickname: "Malkovich" };
 ```
 
-Will be stored in a single database column as `{"name":"John","nickname":"Malkovich"}` value.
-When you'll load data from the database, you will have your object/array/primitive back via JSON.parse
+단일 데이터베이스 컬럼에 `{"name": "John", "nickname": "Malkovich"}`값으로 저장됩니다. 데이터베이스에서 데이터를 로드할 때 JSON.parse를 통해 객체 / 배열 / 기본 요소를 다시 갖게됩니다.
 
-### Columns with generated values
+### 생성된 값이 있는 컬럼
 
-You can create column with generated value using `@Generated` decorator. For example:
+`@Generated` 데코레이터를 사용하여 생성된 값으로 컬럼을 생성할 수 있습니다. 예를 들면:
 
 ```typescript
 @Entity()
@@ -522,16 +501,13 @@ export class User {
 }
 ```
 
-`uuid` value will be automatically generated and stored into the database.
+`uuid` 값은 자동으로 생성되어 데이터베이스에 저장됩니다.
 
-Besides "uuid" there is also "increment" and "rowid" (CockroachDB only) generated types, however there are some limitations
-on some database platforms with this type of generation (for example some databases can only have one increment column,
-or some of them require increment to be a primary key).
+"uuid" 외에 "increment" 및 "rowid"(CockroachDB 전용) 생성 타입도 있지만 이러한 타입의 생성을 사용하는 일부 데이터베이스 플랫폼에는 몇가지 제한이 있습니다(예: 일부 데이터베이스는 하나의 증가컬럼만 가질 수 있거나 기본 키가 되려면 증분이 필요합니다.)
 
-## Column options
+## 컬럼 옵션
 
-Column options defines additional options for your entity columns.
-You can specify column options on `@Column`:
+컬럼 옵션은 항목 컬럼에 대한 추가 옵션을 정의합니다. `@Column`에 컬럼 옵션을 지정할 수 있습니다.
 
 ```typescript
 @Column({
@@ -543,42 +519,39 @@ You can specify column options on `@Column`:
 name: string;
 ```
 
-List of available options in `ColumnOptions`:
+`ColumnOptions`에서 사용 가능한 옵션 목록:
 
-* `type: ColumnType` - Column type. One of the type listed [above](#column-types).
-* `name: string` - Column name in the database table.
-By default the column name is generated from the name of the property.
-You can change it by specifying your own name.
+* `type: ColumnType` - 컬럼 타입. [위](#column-types)에 나열된 타입중 하나.
+* `name: string` - 데이터베이스 테이블의 컬럼 이름입니다. 기본적으로 컬럼 이름은 속성 이름에서 생성됩니다. 자신의 이름을 지정하여 변경할 수 있습니다.
 
-* `length: number` - Column type's length. For example if you want to create `varchar(150)` type you specify column type and length options.
-* `width: number` - column type's display width. Used only for [MySQL integer types](https://dev.mysql.com/doc/refman/5.7/en/integer-types.html)
-* `onUpdate: string` - `ON UPDATE` trigger. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/timestamp-initialization.html).
-* `nullable: boolean` - Makes column `NULL` or `NOT NULL` in the database. By default column is `nullable: false`.
-* `update: boolean` - Indicates if column value is updated by "save" operation. If false, you'll be able to write this value only when you first time insert the object. Default value is `true`.
-* `insert: boolean` - Indicates if column value is set the first time you insert the object.  Default value is `true`.
-* `select: boolean` - Defines whether or not to hide this column by default when making queries. When set to `false`, the column data will not show with a standard query. By default column is `select: true`
-* `default: string` - Adds database-level column's `DEFAULT` value.
-* `primary: boolean` - Marks column as primary. Same if you use `@PrimaryColumn`.
-* `unique: boolean` - Marks column as unique column (creates unique constraint).
-* `comment: string` - Database's column comment. Not supported by all database types.
-* `precision: number` - The precision for a decimal (exact numeric) column (applies only for decimal column), which is the maximum
- number of digits that are stored for the values. Used in some column types.
-* `scale: number` - The scale for a decimal (exact numeric) column (applies only for decimal column), which represents the number of digits to the right of the decimal point and must not be greater than precision. Used in some column types.
-* `zerofill: boolean` - Puts `ZEROFILL` attribute on to a numeric column. Used only in MySQL. If `true`, MySQL automatically adds the `UNSIGNED` attribute to this column.
-* `unsigned: boolean` - Puts `UNSIGNED` attribute on to a numeric column. Used only in MySQL.
-* `charset: string` - Defines a column character set. Not supported by all database types.
-* `collation: string` - Defines a column collation.
-* `enum: string[]|AnyEnum` - Used in `enum` column type to specify list of allowed enum values. You can specify array of values or specify a enum class.
-* `enumName: string` - Defines the name for the used enum.
-* `asExpression: string` - Generated column expression. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html).
-* `generatedType: "VIRTUAL"|"STORED"` - Generated column type. Used only in [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html).
-* `hstoreType: "object"|"string"` - Return type of `HSTORE` column. Returns value as string or as object. Used only in [Postgres](https://www.postgresql.org/docs/9.6/static/hstore.html).
-* `array: boolean` - Used for postgres and cockroachdb column types which can be array (for example int[])
-* `transformer: { from(value: DatabaseType): EntityType, to(value: EntityType): DatabaseType }` - Used to marshal properties of arbitrary type `EntityType` into a type `DatabaseType` supported by the database. Array of transformers are also supported and will be applied in natural order when writing, and in reverse order when reading. e.g. `[lowercase, encrypt]` will first lowercase the string then encrypt it when writing, and will decrypt then do nothing when reading.
+* `length: number` - 컬럼 타입의 길이. 예를 들어 `varchar(150)` 타입을 생성하려면 컬럼 타입과 길이 옵션을 지정합니다.
+* `width: number` - 컬럼 타입의 표시 너비. [MySQL 정수 유형](https://dev.mysql.com/doc/refman/5.7/en/integer-types.html)에만 사용됩니다.
+* `onUpdate: string` - `ON UPDATE` 트리거. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/timestamp-initialization.html)에서만 사용됩니다.
+* `nullable: boolean` - 데이터베이스에서 `NULL` 또는 `NOT NULL` 컬럼을 만듭니다. 기본적으로 컬럼은 `nullable: false`입니다.
+* `update: boolean` - 컬럼 값이 "save" 작업으로 업데이트되었는지 여부를 나타냅니다. false 인 경우 객체를 처음 삽입할 때만이 값을 쓸 수 있습니다. 기본값은 `true`입니다.
+* `insert: boolean` - 객체를 처음 삽입할 때 컬럼 값이 설정되었는지 여부를 나타냅니다. 기본값은 `true`입니다.
+* `select: boolean` - 쿼리를 만들 때 기본적으로 이 컬럼을 숨길 지 여부를 정의합니다. `false`로 설정하면 컬럼 데이터가 표준 쿼리에 표시되지 않습니다. 기본 열은 `select: true`입니다.
+* `default: string` - 데이터베이스 수준 컬럼의 `DEFAULT` 값을 추가합니다.
+* `primary: boolean` - 컬럼을 기본으로 표시합니다. `@PrimaryColumn`을 사용하는 경우에도 동일합니다.
+* `unique: boolean` - 컬럼을 고유한 컬럼으로 표시합니다 (고유 제약조건 생성).
+* `comment: string` - 데이터베이스의 컬럼 주석입니다. 모든 데이터베이스 타입에서 지원되지는 않습니다.
+* `precision: number` - 값에 대해 저장되는 최대 자릿수인 10진수(정확히 숫자) 컬럼의 정밀도(10진수 컬럼에만 적용됨). 일부 컬럼 타입에서 사용됩니다.
+* `scale: number` - 소수점 오른쪽의 자릿수를 나타내며 정밀도보다 크지 않아야하는 10진수(정확히 숫자) 컬럼(10진수 컬럼에만 적용됨)의 스케일입니다. 일부 컬럼 타입에서 사용됩니다.
+* `zerofill: boolean` - 숫자 컬럼에 `ZEROFILL` 속성을 추가합니다. MySQL에서만 사용됩니다. true 인 경우 MySQL은 자동으로 이 컬럼에 `UNSIGNED` 속성을 추가합니다.
+* `unsigned: boolean` - 숫자 열에 `UNSIGNED` 속성을 추가합니다. MySQL에서만 사용됩니다.
+* `charset: string` - 컬럼 문자 집합을 정의합니다. 모든 데이터베이스 타입에서 지원되지는 않습니다.
+* `collation: string` - 컬럼 데이터 정렬을 정의합니다.
+* `enum: string[]|AnyEnum` - 허용되는 열거형 값 목록을 지정하기 위해 `enum` 컬럼 타입에 사용됩니다. 값 배열을 지정하거나 열거형 클래스를 지정할 수 있습니다.
+* `enumName: string` - 사용 된 열거형의 이름을 정의합니다.
+* `asExpression: string` - 생성된 컬럼 표현식. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html)에서만 사용됩니다.
+* `generatedType: "VIRTUAL"|"STORED"` - 생성된 컬럼 타입. [MySQL](https://dev.mysql.com/doc/refman/5.7/en/create-table-generated-columns.html)에서만 사용됩니다.
+* `hstoreType: "object"|"string"` - `HSTORE` 컬럼의 반환 타입입니다. 값을 문자열 또는 객체로 반환합니다. [Postgres](https://www.postgresql.org/docs/9.6/static/hstore.html)에서만 사용됩니다.
+* `array: boolean` - 배열이 될 수 있는 postgres 및 cockroachdb 컬럼 타입에 사용됩니다 (예: int[]).
+* `transformer: { from(value: DatabaseType): EntityType, to(value: EntityType): DatabaseType }` - 임의 유형 `EntityType`의 속성을 데이터베이스에서 지원하는 `DatabaseType` 타입으로 마샬링하는데 사용됩니다. 트랜스포머 배열도 지원되며 쓰기시에는 자연스러운 순서로, 읽을 때는 역순으로 적용됩니다. 예: `[lowercase, encrypt]`는 먼저 문자열을 소문자로 쓴 다음 쓸 때 암호화하고 해독한 다음 읽을 때 아무것도하지 않습니다.
 
-Note: most of those column options are RDBMS-specific and aren't available in `MongoDB`.
+참고: 대부분의 컬럼 옵션은 RDBMS 전용이며 `MongoDB`에서는 사용할 수 없습니다.
 
-## Entity inheritance
+## 엔티티 상속
 
 You can reduce duplication in your code by using entity inheritance.
 
@@ -677,19 +650,17 @@ export class Post extends Content {
 }
 ```
 
-All columns (relations, embeds, etc.) from parent entities (parent can extend other entity as well)
-will be inherited and created in final entities.
+상위 항목(상위 항목도 다른 항목을 확장할 수 있음)의 모든 컬럼(관계, 삽입 등)은 최종 항목에서 상속되고 생성됩니다.
 
-## Tree entities
+## 트리 엔티티
 
 TypeORM supports the Adjacency list and Closure table patterns of storing tree structures.
 
-### Adjacency list
+### 인접 목록(Adjacency list)
 
-Adjacency list is a simple model with self-referencing.
-Benefit of this approach is simplicity,
-drawback is you can't load a big tree at once because of join limitations.
-Example:
+인접 목록은 자체 참조가 있는 간단한 모델입니다. 이 접근 방식의 장점은 단순성이며, 단점은 조인 제한으로 인해 한 번에 큰 트리를 로드할 수 없다는 것입니다.
+
+예:
 
 ```typescript
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typeorm";
@@ -715,12 +686,12 @@ export class Category {
 
 ```
 
-### Closure table
+### 클로저 테이블
 
-A closure table stores relations between parent and child in a separate table in a special way.
-Its efficient in both reads and writes.
-To learn more about closure table take a look at [this awesome presentation by Bill Karwin](https://www.slideshare.net/billkarwin/models-for-hierarchical-data).
-Example:
+클로저 테이블은 부모와 자식 간의 관계를 특별한 방식으로 별도의 테이블에 저장합니다. 읽기와 쓰기 모두에서 효율적입니다.
+클로저 테이블에 대해 자세히 알아 보려면 [Bill Karwin의 멋진 프레젠테이션](https://www.slideshare.net/billkarwin/models-for-hierarchical-data)을 참조하세요.
+
+예:
 
 ```typescript
 import {Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent, TreeLevelColumn} from "typeorm";

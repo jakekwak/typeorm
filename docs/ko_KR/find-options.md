@@ -1,26 +1,27 @@
-# Find Options
+# Find 옵션
 
-* [Basic options](#basic-options)
-* [Advanced options](#advanced-options)
+- [기본 옵션](#기본-옵션)
+- [고급 옵션](#고급-옵션)
+- [고급 옵션 결합](#고급-옵션-결합)
 
-## Basic options
+## 기본 옵션
 
-All repository and manager `find` methods accept special options you can use to query data you need without using `QueryBuilder`:
+모든 저장소 및 관리자 `find` 메소드는 `QueryBuilder`를 사용하지 않고 필요한 데이터를 쿼리하는데 사용할 수 있는 특수 옵션을 허용합니다.
 
-* `select` - indicates which properties of the main object must be selected
+* `select` - 선택해야하는 주 개체의 속성을 나타냅니다.
 
 ```typescript
 userRepository.find({ select: ["firstName", "lastName"] });
 ```
 
-* `relations` - relations needs to be loaded with the main entity. Sub-relations can also be loaded (shorthand for join and leftJoinAndSelect)
+* `relations` - 관계는 기본 엔티티와 함께 로드되어야 합니다. 하위 관계도 로드할 수 있습니다 (join 및 leftJoinAndSelect의 약어).
 
 ```typescript
 userRepository.find({ relations: ["profile", "photos", "videos"] });
 userRepository.find({ relations: ["profile", "photos", "videos", "videos.video_attributes"] });
 ```
 
-* `join` - joins needs to be performed for the entity. Extended version of "relations".
+* `join` - 엔터티에 대해 조인을 수행해야합니다. "관계"의 확장 버전.
 
 ```typescript
 userRepository.find({
@@ -35,18 +36,18 @@ userRepository.find({
 });
 ```
 
-* `where` - simple conditions by which entity should be queried.
+* `where` - 엔터티를 쿼리해야하는 간단한 조건.
 
 ```typescript
 userRepository.find({ where: { firstName: "Timber", lastName: "Saw" } });
 ```
-Querying a column from an embedded entity should be done with respect to the hierarchy in which it was defined. Example:
+포함된 엔터티에서 컬럼을 쿼리하는 것은 정의된 계층 구조와 관련하여 수행되어야합니다. 예:
 
 ```typescript
 userRepository.find({ where: { name: { first: "Timber", last: "Saw" } } });
 ```
 
-Querying with OR operator:
+OR 연산자로 쿼리:
 
 ```typescript
 userRepository.find({
@@ -57,13 +58,13 @@ userRepository.find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "user" WHERE ("firstName" = 'Timber' AND "lastName" = 'Saw') OR ("firstName" = 'Stan' AND "lastName" = 'Lee')
 ```
 
-* `order` - selection order.
+* `order` - 선택 순서.
 
 ```typescript
 userRepository.find({
@@ -74,7 +75,7 @@ userRepository.find({
 });
 ```
 
-* `withDeleted` - include entities which have been soft deleted with `softDelete` or `softRemove`, e.g. have their `@DeleteDateColumn` column set. By default, soft deleted entities are not included.
+* `withDeleted` - `softDelete` 또는 `softRemove`로 소프트 삭제된 항목을 포함합니다; 예: `@DeleteDateColumn` 컬럼이 설정되어 있습니다. 기본적으로 일시 삭제된 엔티티는 포함되지 않습니다.
 
 ```typescript
 userRepository.find({
@@ -82,9 +83,9 @@ userRepository.find({
 });
 ```
 
-`find` methods which return multiple entities (`find`, `findAndCount`, `findByIds`) also accept following options:
+`find` 여러 항목을 반환하는 메서드(`find`, `findAndCount`, `findByIds`)도 다음 옵션을 허용합니다.
 
-* `skip` - offset (paginated) from where entities should be taken.
+* `skip` - 엔티티를 가져와야하는 오프셋(페이지 매김).
 
 ```typescript
 userRepository.find({
@@ -92,7 +93,7 @@ userRepository.find({
 });
 ```
 
-* `take` - limit (paginated) - max number of entities that should be taken.
+* `take` - 리미트(페이지 매김) - 가져와야하는 최대 엔티티 수입니다.
 
 ```typescript
 userRepository.find({
@@ -100,7 +101,7 @@ userRepository.find({
 });
 ```
 
-** If you are using typeorm with MSSQL, and want to use `take` or `limit`, you need to use order as well or you will receive the following error:   `'Invalid usage of the option NEXT in the FETCH statement.'`
+** MSSQL에서 typeorm을 사용 중이고 `take` 또는 `limit`를 사용하려면 `order`도 사용해야합니다. 그렇지 않으면 다음 오류가 표시됩니다. `'FETCH 문에서 NEXT 옵션을 잘못 사용했습니다.'`
 
 ```typescript
 userRepository.find({
@@ -114,7 +115,7 @@ userRepository.find({
 
 
 
-* `cache` - Enables or disables query result caching. See [caching](caching.md) for more information and options.
+* `cache` - 쿼리 결과 캐싱을 활성화하거나 비활성화합니다. 자세한 정보와 옵션은 [캐싱](./caching.md)을 참조하십시오.
 
 ```typescript
 userRepository.find({
@@ -122,16 +123,18 @@ userRepository.find({
 })
 ```
 
-* `lock` - Enables locking mechanism for query. Can be used only in `findOne` method. `lock` is an object which can be defined as:
+* `lock` - 쿼리에 대한 잠금 메커니즘을 사용합니다. `findOne` 메서드에서만 사용할 수 있습니다. `lock`은 다음과 같이 정의할 수 있는 객체입니다.
+
 ```ts
 { mode: "optimistic", version: number|Date }
 ```
-or
+또는
+
 ```ts
 { mode: "pessimistic_read"|"pessimistic_write"|"dirty_read"|"pessimistic_partial_write"|"pessimistic_write_or_fail"|"for_no_key_update" }
 ```
 
-for example:
+예:
 
 ```typescript
 userRepository.findOne(1, {
@@ -139,7 +142,7 @@ userRepository.findOne(1, {
 })
 ```
 
-Support of lock modes, and SQL statements they translate to, are listed in the table below (blank cell denotes unsupported). When specified lock mode is not supported, a `LockNotSupportedOnGivenDriverError` error will be thrown.
+잠금모드 지원 및 변환되는 SQL 문은 아래표에 나열되어 있습니다(빈 셀은 지원되지 않음을 나타냄). 지정된 잠금모드가 지원되지 않는 경우 `LockNotSupportedOnGivenDriverError` 오류가 발생합니다.
 
 ```text
 |                 | pessimistic_read         | pessimistic_write       | dirty_read    | pessimistic_partial_write   | pessimistic_write_or_fail   | for_no_key_update   |
@@ -152,7 +155,7 @@ Support of lock modes, and SQL statements they translate to, are listed in the t
 
 ```
 
-Complete example of find options:
+찾기 옵션의 전체 예:
 
 ```typescript
 userRepository.find({
@@ -173,9 +176,9 @@ userRepository.find({
 ```
 
 
-## Advanced options
+## 고급 옵션
 
-TypeORM provides a lot of built-in operators that can be used to create more complex comparisons:
+TypeORM은 더 복잡한 비교를 생성하는데 사용할 수 있는 많은 내장 연산자를 제공합니다.
 
 * `Not`
 
@@ -187,7 +190,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 })
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" != 'About #1'
@@ -203,7 +206,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" < 10
@@ -219,7 +222,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" <= 10
@@ -235,7 +238,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" > 10
@@ -251,7 +254,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" >= 10
@@ -267,7 +270,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" = 'About #2'
@@ -282,8 +285,7 @@ const loadedPosts = await connection.getRepository(Post).find({
     title: Like("%out #%")
 });
 ```
-
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" LIKE '%out #%'
@@ -299,7 +301,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" ILIKE '%out #%'
@@ -315,7 +317,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" BETWEEN 1 AND 10
@@ -331,7 +333,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" IN ('About #2','About #3')
@@ -347,7 +349,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query (Postgres notation):
+다음 쿼리를 실행합니다. (Postgres 표기법):
 
 ```sql
 SELECT * FROM "post" WHERE "title" = ANY(['About #2','About #3'])
@@ -363,7 +365,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "title" IS NULL
@@ -379,14 +381,13 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "likes" = "dislikes" - 4
 ```
 
-In the simplest case, a raw query is inserted immediately after the equal symbol.
- But you can also completely rewrite the comparison logic using the function.
+가장 간단한 경우에는 등호기호 바로 뒤에 원시 쿼리가 삽입됩니다. 그러나 함수를 사용하여 비교 논리를 완전히 다시 작성할 수도 있습니다.
 
 ```ts
 import {Raw} from "typeorm";
@@ -396,13 +397,13 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "currentDate" > NOW()
 ```
 
-If you need to provide user input, you should not include the user input directly in your query as this may create a SQL injection vulnerability.  Instead, you can use the second argument of the `Raw` function to provide a list of parameters to bind to the query.
+사용자 입력을 제공해야 하는 경우 SQL 주입 취약점을 생성할 수 있으므로 사용자 입력을 쿼리에 직접 포함해서는 안됩니다. 대신 `Raw` 함수의 두번째 인수를 사용하여 쿼리에 바인딩할 매개변수 목록을 제공할 수 있습니다.
 
 ```ts
 import {Raw} from "typeorm";
@@ -412,13 +413,13 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "currentDate" > '2020-10-06'
 ```
 
-If you need to provide user input that is an array, you can bind them as a list of values in the SQL statement by using the special expression syntax:
+배열인 사용자 입력을 제공해야하는 경우 특수 표현식 구문을 사용하여 SQL 문의 값 목록으로 바인딩할 수 있습니다.
 
 ```ts
 import {Raw} from "typeorm";
@@ -428,15 +429,15 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE "titles" IN ('Go To Statement Considered Harmful', 'Structured Programming')
 ```
 
-## Combining Advanced Options
+## 고급 옵션 결합
 
-Also you can combine these operators with `Not` operator:
+또한 이러한 연산자를 `Not` 연산자와 결합할 수 있습니다.
 
 ```ts
 import {Not, MoreThan, Equal} from "typeorm";
@@ -447,7 +448,7 @@ const loadedPosts = await connection.getRepository(Post).find({
 });
 ```
 
-will execute following query:
+다음 쿼리를 실행합니다.
 
 ```sql
 SELECT * FROM "post" WHERE NOT("likes" > 10) AND NOT("title" = 'About #2')

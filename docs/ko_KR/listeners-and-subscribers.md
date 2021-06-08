@@ -1,26 +1,24 @@
-# Entity Listeners and Subscribers
+# 엔터티 리스너 및 구독자
 
-* [What is an Entity Listener](#what-is-an-entity-listener)
-    * [`@AfterLoad`](#afterload)
-    * [`@BeforeInsert`](#beforeinsert)
-    * [`@AfterInsert`](#afterinsert)
-    * [`@BeforeUpdate`](#beforeupdate)
-    * [`@AfterUpdate`](#afterupdate)
-    * [`@BeforeRemove`](#beforeremove)
-    * [`@AfterRemove`](#afterremove)
-* [What is a Subscriber](#what-is-a-subscriber)
+- [엔티티 리스너란?](#엔티티-리스너란)
+  - [`@AfterLoad`](#afterload)
+  - [`@BeforeInsert`](#beforeinsert)
+  - [`@AfterInsert`](#afterinsert)
+  - [`@BeforeUpdate`](#beforeupdate)
+  - [`@AfterUpdate`](#afterupdate)
+  - [`@BeforeRemove`](#beforeremove)
+  - [`@AfterRemove`](#afterremove)
+- [구독자란?](#구독자란)
 
-## What is an Entity Listener
+## 엔티티 리스너란?
 
-Any of your entities can have methods with custom logic that listen to specific entity events.
-You must mark those methods with special decorators depending on what event you want to listen to.
+모든 엔터티에는 특정 엔터티 이벤트를 수신하는 사용자 지정 논리가 있는 메서드가 있을 수 있습니다. 수신하려는 이벤트에 따라 특수 데코레이터로 이러한 메서드를 표시해야합니다.
 
 ### `@AfterLoad`
 
-You can define a method with any name in entity and mark it with `@AfterLoad`
-and TypeORM will call it each time the entity
-is loaded using `QueryBuilder` or repository/manager find methods.
-Example:
+엔터티에 임의의 이름으로 메서드를 정의하고 `@AfterLoad`로 표시하면 TypeORM이 `QueryBuilder` 또는 저장소 / 관리자 찾기 메서드를 사용하여 엔터티가 로드될 때마다 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -36,9 +34,9 @@ export class Post {
 
 ### `@BeforeInsert`
 
-You can define a method with any name in entity and mark it with `@BeforeInsert`
-and TypeORM will call it before the entity is inserted using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeInsert`로 표시하면 TypeORM이 저장소 / 관리자 `save`를 사용하여 엔티티가 삽입되기 전에 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -53,9 +51,9 @@ export class Post {
 
 ### `@AfterInsert`
 
-You can define a method with any name in entity and mark it with `@AfterInsert`
-and TypeORM will call it after the entity is inserted using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@AfterInsert`로 표시하면 TypeORM이 저장소 / 관리자 `save`를 사용하여 엔티티가 삽입된 후 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -70,9 +68,9 @@ export class Post {
 
 ### `@BeforeUpdate`
 
-You can define a method with any name in the entity and mark it with `@BeforeUpdate`
-and TypeORM will call it before an existing entity is updated using repository/manager `save`. Keep in mind, however, that this will occur only when information is changed in the model. If you run `save` without modifying anything from the model, `@BeforeUpdate` and `@AfterUpdate` will not run.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeUpdate`로 표시하면 TypeORM이 저장소 / 관리자 `save`를 사용하여 기존 엔티티가 업데이트되기 전에 이를 호출합니다. 그러나 이것은 모델에서 정보가 변경된 경우에만 발생합니다. 모델을 수정하지 않고 `save`를 실행하면 `@BeforeUpdate`와 `@AfterUpdate`가 실행되지 않습니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -87,9 +85,9 @@ export class Post {
 
 ### `@AfterUpdate`
 
-You can define a method with any name in the entity and mark it with `@AfterUpdate`
-and TypeORM will call it after an existing entity is updated using repository/manager `save`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@ AfterUpdate`로 표시할 수 있으며 TypeORM은 저장소 / 관리자 `save`를 사용하여 기존 엔티티가 업데이트된 후 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -104,9 +102,9 @@ export class Post {
 
 ### `@BeforeRemove`
 
-You can define a method with any name in the entity and mark it with `@BeforeRemove`
-and TypeORM will call it before a entity is removed using repository/manager `remove`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@BeforeRemove`로 표시하면 TypeORM이 저장소 / 관리자 `remove`를 사용하여 엔티티를 제거하기 전에 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -121,9 +119,9 @@ export class Post {
 
 ### `@AfterRemove`
 
-You can define a method with any name in the entity and mark it with `@AfterRemove`
-and TypeORM will call it after the entity is removed using repository/manager `remove`.
-Example:
+엔티티에 임의의 이름으로 메소드를 정의하고 `@AfterRemove`로 표시하면 TypeORM이 저장소 / 관리자 `remove`를 사용하여 엔티티가 제거된 후 이를 호출합니다.
+
+예:
 
 ```typescript
 @Entity()
@@ -136,11 +134,11 @@ export class Post {
 }
 ```
 
-## What is a Subscriber
+## 구독자란?
 
-Marks a class as an event subscriber which can listen to specific entity events or any entity events.
-Events are firing using `QueryBuilder` and repository/manager methods.
-Example:
+특정 엔티티 이벤트 또는 엔티티 이벤트를 수신할 수 있는 이벤트 구독자로 클래스를 표시합니다. `QueryBuilder` 및 저장소 / 관리자 메소드를 사용하여 이벤트가 발생합니다.
+
+예:
 
 ```typescript
 @EventSubscriber()
@@ -148,14 +146,14 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 
 
     /**
-     * Indicates that this subscriber only listen to Post events.
+     * 이 구독자가 Post 이벤트 만 수신함을 나타냅니다.
      */
     listenTo() {
         return Post;
     }
 
     /**
-     * Called before post insertion.
+     * 포스트 삽입 전에 호출됩니다.
      */
     beforeInsert(event: InsertEvent<Post>) {
         console.log(`BEFORE POST INSERTED: `, event.entity);
@@ -164,99 +162,98 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 }
 ```
 
-You can implement any method from `EntitySubscriberInterface`.
-To listen to any entity you just omit `listenTo` method and use `any`:
+`EntitySubscriberInterface`의 모든 메소드를 구현할 수 있습니다. 엔티티를 수신하려면 `listenTo` 메소드를 생략하고 `any`를 사용하면됩니다.
 
 ```typescript
 @EventSubscriber()
 export class PostSubscriber implements EntitySubscriberInterface {
 
     /**
-     * Called after entity is loaded.
+     * 엔티티가 로드된 후 호출됩니다.
      */
     afterLoad(entity: any) {
         console.log(`AFTER ENTITY LOADED: `, entity);
     }
 
     /**
-     * Called before post insertion.
+     * 포스트 삽입 전에 호출됩니다.
      */
     beforeInsert(event: InsertEvent<any>) {
         console.log(`BEFORE POST INSERTED: `, event.entity);
     }
 
     /**
-     * Called after entity insertion.
+     * 엔티티 삽입 후 호출됩니다.
      */
     afterInsert(event: InsertEvent<any>) {
         console.log(`AFTER ENTITY INSERTED: `, event.entity);
     }
 
     /**
-     * Called before entity update.
+     * 엔티티 업데이트 전에 호출됩니다.
      */
     beforeUpdate(event: UpdateEvent<any>) {
         console.log(`BEFORE ENTITY UPDATED: `, event.entity);
     }
 
     /**
-     * Called after entity update.
+     * 엔티티 업데이트 후 호출됩니다.
      */
     afterUpdate(event: UpdateEvent<any>) {
         console.log(`AFTER ENTITY UPDATED: `, event.entity);
     }
 
     /**
-     * Called before entity removal.
+     * 엔티티 제거 전에 호출됩니다.
      */
     beforeRemove(event: RemoveEvent<any>) {
         console.log(`BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `, event.entity);
     }
 
     /**
-     * Called after entity removal.
+     * 엔티티 제거 후 호출됩니다.
      */
     afterRemove(event: RemoveEvent<any>) {
         console.log(`AFTER ENTITY WITH ID ${event.entityId} REMOVED: `, event.entity);
     }
 
     /**
-     * Called before transaction start.
+     * 트랜잭션 시작 전에 호출됩니다.
      */
     beforeTransactionStart(event: TransactionStartEvent) {
         console.log(`BEFORE TRANSACTION STARTED: `, event);
     }
 
     /**
-     * Called after transaction start.
+     * 트랜잭션 시작 후 호출됩니다.
      */
     afterTransactionStart(event: TransactionStartEvent) {
         console.log(`AFTER TRANSACTION STARTED: `, event);
     }
 
     /**
-     * Called before transaction commit.
+     * 트랜잭션 커밋 전에 호출됩니다.
      */
     beforeTransactionCommit(event: TransactionCommitEvent) {
         console.log(`BEFORE TRANSACTION COMMITTED: `, event);
     }
 
     /**
-     * Called after transaction commit.
+     * 트랜잭션 커밋 후에 호출됩니다.
      */
     afterTransactionCommit(event: TransactionCommitEvent) {
         console.log(`AFTER TRANSACTION COMMITTED: `, event);
     }
 
     /**
-     * Called before transaction rollback.
+     * 트랜잭션 롤백 전에 호출됩니다.
      */
     beforeTransactionRollback(event: TransactionRollbackEvent) {
         console.log(`BEFORE TRANSACTION ROLLBACK: `, event);
     }
 
     /**
-     * Called after transaction rollback.
+     * 트랜잭션 롤백 후에 호출됩니다.
      */
     afterTransactionRollback(event: TransactionRollbackEvent) {
         console.log(`AFTER TRANSACTION ROLLBACK: `, event);
@@ -265,4 +262,4 @@ export class PostSubscriber implements EntitySubscriberInterface {
 }
 ```
 
-Make sure your `subscribers` property is set in your [Connection Options](./connection-options.md#common-connection-options) so TypeORM loads your subscriber.
+`subscribers` 속성이 [Connection 옵션](./connection-options.md#일반적인-연결-옵션)에 설정되어 있는지 확인하여 TypeORM이 가입자를 로드합니다.

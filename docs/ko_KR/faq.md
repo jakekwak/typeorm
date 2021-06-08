@@ -1,143 +1,121 @@
 # FAQ
 
-* [How do I change a column name in the database?](#how-do-i-change-a-column-name-in-the-database)
-* [How can I set value of default some function, for example `NOW()`?](#how-can-i-set-the-default-value-to-some-function-for-example-now)
-* [How to do validation?](#how-to-do-validation)
-* [What does "owner side" in relations mean or why we need to put `@JoinColumn` and `@JoinTable` decorators?](#what-does-owner-side-in-a-relations-mean-or-why-we-need-to-use-joincolumn-and-jointable)
-* [How do I add extra columns into many-to-many (junction) table?](#how-do-i-add-extra-columns-into-many-to-many-junction-table)
-* [How to use TypeORM with dependency injection tool?](#how-to-use-typeorm-with-a-dependency-injection-tool)
-* [How to handle outDir TypeScript compiler option?](#how-to-handle-outdir-typescript-compiler-option)
-* [How to use TypeORM with ts-node?](#how-to-use-typeorm-with-ts-node)
-* [How to use Webpack for the backend](#how-to-use-webpack-for-the-backend)
+- [데이터베이스 스키마를 어떻게 업데이트합니까?](#데이터베이스-스키마를-어떻게-업데이트합니까)
+- [데이터베이스에서 컬럼 이름을 어떻게 변경합니까?](#데이터베이스에서-컬럼-이름을-어떻게-변경합니까)
+- [예를 들어 `NOW()`와 같은 일부 함수에 기본값을 어떻게 설정할 수 있습니까?](#예를-들어-now와-같은-일부-함수에-기본값을-어떻게-설정할-수-있습니까)
+- [유효성 검사는 어떻게하나요?](#유효성-검사는-어떻게하나요)
+- [관계에서 "소유자 측"은 무엇을 의미하거나 `@JoinColumn` 및 `@JoinTable`을 사용해야하는 이유는 무엇입니까?](#관계에서-소유자-측은-무엇을-의미하거나-joincolumn-및-jointable을-사용해야하는-이유는-무엇입니까)
+- [다대다(정션) 테이블에 추가 컬럼을 어떻게 추가합니까?](#다대다정션-테이블에-추가-컬럼을-어떻게-추가합니까)
+- [종속성 주입 도구로 TypeORM을 사용하는 방법은 무엇입니까?](#종속성-주입-도구로-typeorm을-사용하는-방법은-무엇입니까)
+- [outDir TypeScript 컴파일러 옵션을 처리하는 방법은 무엇입니까?](#outdir-typescript-컴파일러-옵션을-처리하는-방법은-무엇입니까)
+- [ts-node에서 TypeORM을 사용하는 방법은 무엇입니까?](#ts-node에서-typeorm을-사용하는-방법은-무엇입니까)
+- [백엔드에 Webpack을 사용하는 방법은 무엇입니까?](#백엔드에-webpack을-사용하는-방법은-무엇입니까)
+  - [마이그레이션 파일 번들링](#마이그레이션-파일-번들링)
 
 
-## How do I update a database schema?
+## 데이터베이스 스키마를 어떻게 업데이트합니까?
 
-One of the main responsibilities of TypeORM is to keep your database tables in sync with your entities.
-There are two ways that help you achieve this:
+TypeORM의 주요 책임중 하나는 데이터베이스 테이블을 엔티티와 동기화 상태로 유지하는 것입니다. 이를 달성하는 데 도움이되는 두 가지 방법이 있습니다.
 
-* Use `synchronize: true` in your connection options:
-    
+* 연결 옵션에서 `synchronize: true`를 사용하십시오.
+
     ```typescript
     import {createConnection} from "typeorm";
-    
+
     createConnection({
         synchronize: true
     });
     ```
 
-    This option automatically syncs your database tables with the given entities each time you run this code. 
-    This option is perfect during development, but in production you may not want this option to be enabled.
+    이 옵션은 이 코드를 실행할 때마다 데이터베이스 테이블을 지정된 엔터티와 자동으로 동기화합니다. 이 옵션은 개발중에는 완벽하지만 프로덕션에서는 이 옵션을 활성화하지 않을 수 있습니다.
 
-* Use command line tools and run schema sync manually in the command line:
-    
+* 명령줄 도구를 사용하고 명령줄에서 수동으로 스키마 동기화를 실행합니다.
+
     ```
     typeorm schema:sync
     ```
-    
-    This command will execute schema synchronization. 
-    Note, to make command line tools work, you must create an ormconfig.json file.
 
-Schema sync is extremely fast. 
-If you are considering the disable synchronize option during development because of performance issues, 
-first check how fast it is.
+    이 명령은 스키마 동기화를 실행합니다. 명령줄 도구가 작동하도록 하려면 ormconfig.json 파일을 만들어야 합니다.
 
-## How do I change a column name in the database?
+스키마 동기화는 매우 빠릅니다. 성능 문제로 인해 개발 중에 동기화 비활성화 옵션을 고려중인 경우 먼저 속도를 확인하십시오.
 
-By default, column names are generated from property names.
-You can simply change it by specifying a `name` column option:
+## 데이터베이스에서 컬럼 이름을 어떻게 변경합니까?
+
+기본적으로 컬럼 이름은 속성 이름에서 생성됩니다. `name` 컬럼 옵션을 지정하여 간단히 변경할 수 있습니다.
 
 ```typescript
 @Column({ name: "is_active" })
 isActive: boolean;
 ```
 
-## How can I set the default value to some function, for example `NOW()`?
+## 예를 들어 `NOW()`와 같은 일부 함수에 기본값을 어떻게 설정할 수 있습니까?
 
-`default` column option supports a function. 
-If you are passing a function which returns a string,
-it will use that string as a default value without escaping it.
-For example: 
+`default`컬럼 옵션은 함수를 지원합니다. 문자열을 반환하는 함수를 전달하는 경우 해당 문자열을 이스케이프하지 않고 기본값으로 사용합니다.
+
+예를 들면:
 
 ```typescript
 @Column({ default: () => "NOW()" })
 date: Date;
 ```
 
-## How to do validation?
+## 유효성 검사는 어떻게하나요?
 
-Validation is not part of TypeORM because validation is a separate process
-not really related to what TypeORM does.
-If you want to use validation use [class-validator](https://github.com/pleerock/class-validator) - it works perfectly with TypeORM.
+유효성 검사는 TypeORM이 수행하는 작업과 실제로 관련이 없는 별도의 프로세스이기 때문에 TypeORM의 일부가 아닙니다. 유효성 검사를 사용하려면 [class-validator](https://github.com/pleerock/class-validator)를 사용하세요. TypeORM과 완벽하게 작동합니다.
 
-## What does "owner side" in a relations mean or why we need to use `@JoinColumn` and `@JoinTable`?
+## 관계에서 "소유자 측"은 무엇을 의미하거나 `@JoinColumn` 및 `@JoinTable`을 사용해야하는 이유는 무엇입니까?
 
-Let's start with `one-to-one` relation.
-Let's say we have two entities: `User` and `Photo`:
+`일대일` 관계부터 시작하겠습니다. `User`와 `Photo`라는 두개의 엔티티가 있다고 가정해 보겠습니다.
 
 ```typescript
 @Entity()
 export class User {
-    
+
     @PrimaryGeneratedColumn()
     id: number;
-    
+
     @Column()
     name: string;
-    
+
     @OneToOne()
     photo: Photo;
-    
+
 }
 ```
 
 ```typescript
 @Entity()
 export class Photo {
-    
+
     @PrimaryGeneratedColumn()
     id: number;
-    
+
     @Column()
     url: string;
-    
+
     @OneToOne()
     user: User;
-    
+
 }
 ```
 
-This example does not have a `@JoinColumn` which is incorrect.
-Why? Because to make a real relation, we need to create a column in the database.
-We need to create a column `userId` in `photo` or `photoId` in `user`.
-But which column should be created - `userId` or `photoId`?
-TypeORM cannot decide for you. 
-To make a decision, you must use `@JoinColumn` on one of the sides.
-If you put `@JoinColumn` in `Photo` then a column called `userId` will be created in the `photo` table.
-If you put `@JoinColumn` in `User` then a column called `photoId` will be created in the `user` table.
-The side with `@JoinColumn` will be called the "owner side of the relationship".
-The other side of the relation, without `@JoinColumn`, is called the "inverse (non-owner) side of relationship".
+이 예에는 잘못된 `@JoinColumn`이 없습니다. 왜? 실제 관계를 만들려면 데이터베이스에 컬럼을 만들어야합니다. `photo`에 `userId` 컬럼을, `user`에 `photoId` 컬럼을 생성해야합니다. 그러나 `userId` 또는 `photoId` 중 어떤 컬럼을 만들어야합니까? TypeORM은 당신을 위해 결정할 수 없습니다. 결정을 내리려면 한쪽에 `@JoinColumn`을 사용해야합니다. `photo`에 `@JoinColumn`을 입력하면 `photo` 테이블에 `userId`라는 컬럼이 생성됩니다. `User`에 `@JoinColumn`을 입력하면 `user` 테이블에 `photoId`라는 컬럼이 생성됩니다. `@JoinColumn`이 있는 쪽을 **"관계의 소유자 쪽"**이라고 합니다. `@JoinColumn`이 없는 관계의 다른 쪽을 **"관계의 역(비 소유자)쪽"**이라고 합니다.
 
-It is the same in a `@ManyToMany` relation. You use `@JoinTable` to show the owner side of the relation.
+`@ ManyToMany` 관계에서도 동일합니다. 관계의 소유자 측을 표시하려면 `@JoinTable`을 사용합니다.
 
-In `@ManyToOne` or `@OneToMany` relations, `@JoinColumn` is not necessary because 
-both decorators are different, and the table where you put the `@ManyToOne` decorator will have the relational column. 
+`@ManyToOne` 또는 `@OneToMany` 관계에서는 `@JoinColumn`이 필요하지 않습니다. 두 데코레이터는 모두 다르며 `@ManyToOne` 데코레이터를 넣은 테이블에는 관계형 컬럼이 있습니다.
 
-`@JoinColumn` and `@JoinTable` decorators can also be used to specify additional
-join column / junction table settings, like join column name or junction table name. 
+`@JoinColumn` 및 `@JoinTable` 데코레이터를 사용하여 조인 컬럼 이름 또는 접합 테이블 이름과 같은 추가 조인 컬럼/정션 테이블 설정을 지정할 수도 있습니다.
 
-## How do I add extra columns into many-to-many (junction) table?
+## 다대다(정션) 테이블에 추가 컬럼을 어떻게 추가합니까?
 
-It's not possible to add extra columns into a table created by a many-to-many relation.
-You'll need to create a separate entity and bind it using two many-to-one relations with the target entities
-(the effect will be same as creating a many-to-many table), 
-and add extra columns in there. You can read more about this in [Many-to-Many relations](./many-to-many-relations.md#many-to-many-relations-with-custom-properties).
+다대다 관계에 의해 생성된 테이블에 추가 컴럼을 추가할 수 없습니다. 별도의 엔터티를 만들고 대상 엔터티와 두개의 다대일 관계를 사용하여 바인딩하고(효과는 다대다 테이블을 만드는 것과 동일함) 거기에 추가 컬럼을 추가해야 합니다. 이에 대한 자세한 내용은 [다대다 관계](./many-to-many-relations.md#many-to-many-relations-with-custom-properties)에서 확인할 수 있습니다.
 
-## How to use TypeORM with a dependency injection tool?
+## 종속성 주입 도구로 TypeORM을 사용하는 방법은 무엇입니까?
 
-In TypeORM you can use service containers. Service containers allow you to inject custom services in some places, like in subscribers or custom naming strategies. For example, you can get access to ConnectionManager from any place using a service container.
+TypeORM에서는 서비스 컨테이너를 사용할 수 있습니다. 서비스 컨테이너를 사용하면 구독자 또는 사용자 지정 이름 지정 전략과 같은 일부 위치에 사용자 지정 서비스를 삽입할 수 있습니다. 예를 들어 서비스 컨테이너를 사용하여 모든 위치에서 ConnectionManager에 액세스할 수 있습니다.
 
-Here is an example for how you can set up typedi service containers with TypeORM. Note: you can setup any service container with TypeORM.
+다음은 TypeORM으로 typedi 서비스 컨테이너를 설정하는 방법에 대한 예입니다. 참고: TypeORM으로 모든 서비스 컨테이너를 설정할 수 있습니다.
 
 ```typescript
 import {useContainer, createConnection} from "typeorm";
@@ -148,22 +126,15 @@ useContainer(Container);
 createConnection({/* ... */});
 ```
 
-## How to handle outDir TypeScript compiler option?
+## outDir TypeScript 컴파일러 옵션을 처리하는 방법은 무엇입니까?
 
-When you are using the `outDir` compiler option, don't forget to copy assets and resources your app is using into the output directory.
-Otherwise, make sure to setup correct paths to those assets.
+`outDir` 컴파일러 옵션을 사용하는 경우 앱에서 사용중인 자산과 리소스를 출력 디렉터리에 복사하는 것을 잊지 마십시오. 그렇지 않으면 해당 자산에 대한 올바른 경로를 설정해야 합니다.
 
-One important thing to know is that when you remove or move entities, the old entities are left untouched inside the output directory.
-For example, you create a `Post` entity and rename it to `Blog`,
-you no longer have `Post.ts` in your project. However, `Post.js` is left inside the output directory.
-Now, when TypeORM reads entities from your output directory, it sees two entities - `Post` and `Blog`.
-This may be a source of bugs. 
-That's why when you remove and move entities with `outDir` enabled, it's strongly recommended to remove your output directory and recompile the project again. 
+알아야 할 한가지 중요한 점은 엔티티를 제거하거나 이동할 때 이전 엔티티가 출력 디렉토리 내부에 그대로 남아 있다는 것입니다. 예를 들어 `Post` 항목을 만들고 이름을 `Blog`로 변경하면 더 이상 프로젝트에 `Post.ts`가 없습니다. 그러나 `Post.js`는 출력 디렉토리 안에 남아 있습니다. 이제 TypeORM이 출력 디렉토리에서 항목을 읽을 때 `Post`와 `Blog`라는 두 항목이 표시됩니다. 이것은 버그의 원인일 수 있습니다. 그렇기 때문에 `outDir`이 활성화된 상태에서 엔티티를 제거하고 이동할 때 출력 디렉토리를 제거하고 프로젝트를 다시 컴파일하는 것이 좋습니다.
 
-## How to use TypeORM with ts-node?
+## ts-node에서 TypeORM을 사용하는 방법은 무엇입니까?
 
-You can prevent compiling files each time using [ts-node](https://github.com/TypeStrong/ts-node).
-If you are using ts-node, you can specify `ts` entities inside your connection options:
+[ts-node](https://github.com/TypeStrong/ts-node)를 사용하여 매번 파일 컴파일을 방지할 수 있습니다. ts-node를 사용하는 경우 연결 옵션 내에서 `ts` 항목을 지정할 수 있습니다.
 
 ```
 {
@@ -172,19 +143,17 @@ If you are using ts-node, you can specify `ts` entities inside your connection o
 }
 ```
 
-Also, if you are compiling js files into the same folder where your typescript files are, 
-make sure to use the `outDir` compiler option to prevent 
-[this issue](https://github.com/TypeStrong/ts-node/issues/432). 
+또한 typescript 파일이있는 폴더에 js 파일을 컴파일하는 경우 `outDir` 컴파일러 옵션을 사용하여 [이 문제](https://github.com/TypeStrong/ts-node/issues/432)를 방지하십시오.
 
-Also, if you want to use the ts-node CLI, you can execute TypeORM the following way:
+또한 ts-node CLI를 사용하려는 경우 다음 방법으로 TypeORM을 실행할 수 있습니다.
 
 ```
 ts-node ./node_modules/.bin/typeorm schema:sync
 ```
 
-## How to use Webpack for the backend?
+## 백엔드에 Webpack을 사용하는 방법은 무엇입니까?
 
-Webpack produces warnings due to what it views as missing require statements -- require statements for all drivers supported by TypeORM. To suppress these warnings for unused drivers, you will need to edit your webpack config file.
+Webpack은 require 문이 누락된 것으로 간주하여 경고를 생성합니다. TypeORM에서 지원하는 모든 드라이버에 대한 문이 필요합니다. 사용하지 않는 드라이버에 대한 이러한 경고를 표시하지 않으려면 웹팩 구성 파일을 편집해야 합니다.
 
 ```js
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
@@ -192,7 +161,7 @@ const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 module.exports = {
     ...
     plugins: [
-        //ignore the drivers you don't want. This is the complete list of all drivers -- remove the suppressions for drivers you want to use.
+        //원하지 않는 드라이버는 무시하십시오. 이것은 모든 드라이버의 전체 목록입니다. 사용하려는 드라이버에 대한 억제를 제거하십시오.
         new FilterWarningsPlugin({
             exclude: [/mongodb/, /mssql/, /mysql/, /mysql2/, /oracledb/, /pg/, /pg-native/, /pg-query-stream/, /react-native-sqlite-storage/, /redis/, /sqlite3/, /sql.js/, /typeorm-aurora-data-api-driver/]
         })
@@ -200,18 +169,18 @@ module.exports = {
 };
 ```
 
-### Bundling Migration Files
+### 마이그레이션 파일 번들링
 
-By default Webpack tries to bundle everything into one file. This can be problematic when your project has migration files which are meant to be executed after bundled code is deployed to production. To make sure all your migrations can be recognized and executed by TypeORM, you may need to use "Object Syntax" for the `entry` configuration for the migration files only.
+기본적으로 Webpack은 모든 것을 하나의 파일로 묶으려고 합니다. 프로젝트에 번들 코드가 프로덕션에 배포된 후 실행될 마이그레이션 파일이 있는 경우 문제가 될 수 있습니다. 모든 마이그레이션이 TypeORM에서 인식되고 실행될 수 있도록 하려면 마이그레이션 파일에 대해서만 `entry` 구성에 "Object Syntax"를 사용해야 할 수 있습니다.
 
 ```js
 const glob = require('glob');
 const path = require('path');
 
 module.exports = {
-  // ... your webpack configurations here...
-  // Dynamically generate a `{ [name]: sourceFileName }` map for the `entry` option
-  // change `src/db/migrations` to the relative path to your migration folder
+  // ... 여기에 웹팩 구성 ...
+  // `entry` 옵션에 대한 `{ [name]: sourceFileName }` 맵을 동적으로 생성합니다.
+  // `src/db/migrations`를 마이그레이션 폴더의 상대 경로로 변경합니다.
   entry: glob.sync(path.resolve('src/db/migrations/*.ts')).reduce((entries, filename) => {
     const migrationName = path.basename(filename, '.ts');
     return Object.assign({}, entries, {
@@ -219,20 +188,20 @@ module.exports = {
     });
   }, {}),
   resolve: {
-    // assuming all your migration files are written in TypeScript
+    // 모든 마이그레이션 파일이 TypeScript로 작성되었다고 가정합니다.
     extensions: ['.ts']
    },
   output: {
-    // change `path` to where you want to put transpiled migration files.
+    // 트랜스파일된 마이그레이션 파일을 저장할 위치로 `path`를 변경합니다.
     path: __dirname + '/dist/db/migrations',
-    // this is important - we want UMD (Universal Module Definition) for migration files.
+    // 이것은 중요합니다. 마이그레이션 파일에 UMD(Universal Module Definition)가 필요합니다.
     libraryTarget: 'umd',
     filename: '[name].js',
   },
 };
 ```
 
-Also, since Webpack 4, when using `mode: 'production'`, files are optimized by default which includes mangling your code in order to minimize file sizes. This breaks the migrations because TypeORM relies on their names to determine which has already been executed. You may disable minimization completely by adding:
+또한 Webpack 4 이후 `mode: 'production'`을 사용할 때 파일 크기를 최소화하기 위해 코드를 변경하는 등 기본적으로 파일이 최적화됩니다. 이것은 TypeORM이 이미 실행된 것을 결정하기 위해 이름에 의존하기 때문에 마이그레이션을 중단합니다. 다음을 추가하여 최소화를 완전히 비활성화 할 수 있습니다.
 
 ```js
 module.exports = {
@@ -243,13 +212,13 @@ module.exports = {
 };
 ```
 
-Alternatively, if you are using the `UglifyJsPlugin`, you can tell it to not change class or function names like so:
+또는 `UglifyJsPlugin`을 사용하는 경우 다음과 같이 클래스 또는 함수 이름을 변경하지 않도록 지시할 수 있습니다.
 
 ```js
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-  // ... other Webpack configurations here
+  // ... 여기에 다른 Webpack 구성
   optimization: {
     minimizer: [
       new UglifyJsPlugin({
@@ -263,16 +232,16 @@ module.exports = {
 };
 ```
 
-Lastly, make sure in your `ormconfig` file, the transpiled migration files are included:
+마지막으로 `ormconfig` 파일에 트랜스파일된 마이그레이션 파일이 포함되어 있는지 확인하십시오.
 
 ```js
-// TypeORM Configurations
+// TypeORM 구성
 module.exports = {
   // ...
   migrations: [
-    // this is the relative path to the transpiled migration files in production
+    // 프로덕션에서 트랜스파일된 마이그레이션 파일의 상대 경로입니다.
     'db/migrations/**/*.js',
-    // your source migration files, used in development mode
+    // 개발 모드에서 사용되는 소스 마이그레이션 파일
     'src/db/migrations/**/*.ts',
   ],
 };

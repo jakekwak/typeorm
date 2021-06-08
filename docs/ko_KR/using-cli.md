@@ -1,70 +1,73 @@
-# Using CLI
+# CLI 사용하기
 
-* [Installing CLI](#installing-cli)
-* [Initialize a new TypeORM project](#initialize-a-new-typeorm-project)
-* [Create a new entity](#create-a-new-entity)
-* [Create a new subscriber](#create-a-new-subscriber)
-* [Create a new migration](#create-a-new-migration)
-* [Generate a migration from existing table schema](#generate-a-migration-from-existing-table-schema)
-* [Run migrations](#run-migrations)
-* [Revert migrations](#revert-migrations)
-* [Show migrations](#show-migrations)
-* [Sync database schema](#sync-database-schema)
-* [Log sync database schema queries without actual running them](#log-sync-database-schema-queries-without-actual-running-them)
-* [Drop database schema](#drop-database-schema)
-* [Run any sql query](#run-any-sql-query)
-* [Clear cache](#clear-cache)
-* [Check version](#check-version)
+- [CLI 설치하기](#cli-설치하기)
+- [새 TypeORM 프로젝트 초기화](#새-typeorm-프로젝트-초기화)
+- [Create a new entity](#create-a-new-entity)
+- [새 구독자 만들기](#새-구독자-만들기)
+- [새 마이그레이션 만들기](#새-마이그레이션-만들기)
+- [기존 테이블 스키마에서 마이그레이션 생성](#기존-테이블-스키마에서-마이그레이션-생성)
+- [마이그레이션 실행](#마이그레이션-실행)
+- [Revert migrations](#revert-migrations)
+- [마이그레이션 표시](#마이그레이션-표시)
+- [데이터베이스 스키마 동기화](#데이터베이스-스키마-동기화)
+- [실제로 실행하지 않고 동기화 데이터베이스 스키마 쿼리 기록](#실제로-실행하지-않고-동기화-데이터베이스-스키마-쿼리-기록)
+- [데이터베이스 스키마 삭제](#데이터베이스-스키마-삭제)
+- [SQL 쿼리 실행](#sql-쿼리-실행)
+- [캐시 지우기](#캐시-지우기)
+- [버전 확인](#버전-확인)
 
-## Installing CLI
-### If entities files are in javascript
-If you have a local typeorm version, make sure it matches the global version we are going to install.
+## CLI 설치하기
+### 엔티티 파일이 자바스크립트에 있는 경우
+로컬 typeorm 버전이 있는 경우 설치할 글로벌 버전과 일치하는지 확인하십시오.
 
-Install typeorm globally with `npm i -g typeorm`.
-You can also chose to use `npx typeorm <params>` for each command if you prefer not having to install it.
+`npm i -g typeorm`을 사용하여 typeorm을 전역적으로 설치합니다. 설치할 필요가 없는 경우 각 명령에 `npx typeorm <params>`를 사용하도록 선택할 수도 있습니다.
 
-### If entities files are in typescript
-This CLI tool is written in javascript and to be run on node. If your entity files are in typescript, you will need to transpile them to javascript before using CLI. You may skip this section if you only use javascript.
+### 엔티티 파일이 타이프스크립트에 있는 경우
+이 CLI 도구는 자바스크립트로 작성되었으며 노드에서 실행됩니다. 엔터티 파일이 typescript에 있는 경우 CLI를 사용하기 전에 해당 파일을 javascript로 변환해야합니다. 자바스크립트만 사용하는 경우 이 섹션을 건너뛸 수 있습니다.
 
-You may setup ts-node in your project to ease the operation as follows:
+다음과 같이 작업을 쉽게하기 위해 프로젝트에서 ts-node를 설정할 수 있습니다.
 
-Install ts-node globally:
+ts-node를 전역으로 설치합니다.
+
 ```
 npm install -g ts-node
 ```
 
-Add typeorm command under scripts section in package.json
+package.json의 스크립트 섹션 아래에 typeorm 명령 추가
+
 ```
 "scripts": {
     ...
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"    
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
 }
 ```
 
-If you want to load more modules like [module-alias](https://github.com/ilearnio/module-alias) you can add more `--require my-module-supporting-register`
+[module-alias](https://github.com/ilearnio/module-alias)와 같은 더 많은 모듈을 로드하려면 `--require my-module-supporting-register`를 더 추가할 수 있습니다.
 
-Then you may run the command like this:
+그런 다음 다음과 같은 명령을 실행할 수 있습니다.
+
 ```
 npm run typeorm migration:run
 ```
 
-If you need to pass parameter with dash to npm script, you will need to add them after --. For example, if you need to *generate*, the command is like this:
+대시가 있는 매개변수를 npm 스크립트에 전달해야 하는 경우 - 뒤에 추가해야합니다. 예를 들어 *생성*이 필요한 경우 명령은 다음과 같습니다.
 ```
 npm run typeorm migration:generate -- -n migrationNameHere
 ```
 
-### How to read the documentation
-To reduce verbosity of the documentation, the following sections are using a globally installed typeorm CLI. Depending on how you installed the CLI, you may replace `typeorm` at the start of the command, by either `npx typeorm` or `npm run typeorm`.
+### 문서를 읽는 방법
 
-## Initialize a new TypeORM project
+설명서의 자세한 내용을 줄이기 위해 다음 섹션에서는 전역적으로 설치된 typeorm CLI를 사용합니다. CLI를 설치한 방법에 따라 명령 시작시 `typeorm`을 `npx typeorm` 또는 `npm run typeorm`으로 바꿀 수 있습니다.
 
-You can create a new project with everything already setup:
+## 새 TypeORM 프로젝트 초기화
+
+이미 모든 것이 설정되어 있는 새 프로젝트를 만들 수 있습니다.
 
 ```
 typeorm init
 ```
 
-It creates all files needed for a basic project with TypeORM:
+TypeORM을 사용하여 기본 프로젝트에 필요한 모든 파일을 만듭니다.
 
 * .gitignore
 * package.json
@@ -74,49 +77,44 @@ It creates all files needed for a basic project with TypeORM:
 * src/entity/User.ts
 * src/index.ts
 
-Then you can run `npm install` to install all dependencies.
-Once all dependencies are installed, you need to modify `ormconfig.json` and insert your own database settings.
-After that, you can run your application by running `npm start`.
+그런 다음 `npm install`을 실행하여 모든 종속성을 설치할 수 있습니다. 모든 종속성이 설치되면 `ormconfig.json`을 수정하고 자체 데이터베이스 설정을 삽입해야합니다. 그런 다음 `npm start`를 실행하여 애플리케이션을 실행할 수 있습니다.
 
-All files are generated in the current directory.
-If you want to generate them in a special directory you can use `--name`: 
+모든 파일은 현재 디렉토리에 생성됩니다. 특수 디렉토리에 생성하려면 `--name`을 사용할 수 있습니다.
 
 ```
 typeorm init --name my-project
 ```
 
-To specify a specific database you use you can use `--database`:
+사용하는 특정 데이터베이스를 지정하려면 `--database`를 사용할 수 있습니다.
 
 ```
 typeorm init --database mssql
 ```
 
-You can also generate a base project with Express:
+Express를 사용하여 기본 프로젝트를 생성할 수도 있습니다.
 
 ```
 typeorm init --name my-project --express
 ```
 
-If you are using docker you can generate a `docker-compose.yml` file using:
+docker를 사용하는 경우 다음을 사용하여 `docker-compose.yml` 파일을 생성할 수 있습니다.
 
 ```
 typeorm init --docker
 ```
 
-`typeorm init` is the easiest and fastest way to setup a TypeORM project.
+`typeorm init`는 TypeORM 프로젝트를 설정하는 가장 쉽고 빠른 방법입니다.
 
 
 ## Create a new entity
 
-You can create a new entity using CLI:
+CLI를 사용하여 새 엔티티를 생성할 수 있습니다.
 
 ```
 typeorm entity:create -n User
 ```
 
-where `User` is an entity file and class name. 
-Running the command will create a new empty entity in `entitiesDir` of the project.
-To setup the `entitiesDir` of the project you must add it in connection options:
+여기서 `User`는 엔티티 파일 및 클래스 이름입니다. 명령어를 실행하면 프로젝트의 `entitiesDir`에 비어있는 새 항목이 생성됩니다. 프로젝트의 `entitiesDir`을 설정하려면 연결 옵션에 추가해야합니다.
 
 ```
 {
@@ -126,28 +124,24 @@ To setup the `entitiesDir` of the project you must add it in connection options:
 }
 ```
 
-Learn more about [connection options](./connection-options.md).
-If you have a multi-module project structure with multiple entities in different directories
-you can provide the path to the CLI command where you want to generate an entity:
+[연결 옵션](./connection-options.md)에 대해 자세히 알아보세요. 서로 다른 디렉터리에 여러 엔터티가 있는 다중모듈 프로젝트 구조가 있는 경우 엔터티를 생성하려는 CLI 명령의 경로를 제공할 수 있습니다.
 
- 
+
 ```
 typeorm entity:create -n User -d src/user/entity
 ```
 
-Learn more about [entities](./entities.md).
+[엔티티](./entities.md)에 대해 자세히 알아보세요.
 
-## Create a new subscriber
+## 새 구독자 만들기
 
-You can create a new subscriber using CLI:
+CLI를 사용하여 새 구독자를 만들 수 있습니다.
 
 ```
 typeorm subscriber:create -n UserSubscriber
 ```
 
-where `UserSubscriber` is a subscriber file and class name. 
-Running the following command will create a new empty subscriber in the `subscribersDir` of the project.
-To setup `subscribersDir` you must add it in connection options:
+여기서 `UserSubscriber`는 구독자 파일 및 클래스 이름입니다. 다음 명령을 실행하면 프로젝트의 `subscribersDir`에 비어있는 새 구독자가 생성됩니다. `subscribersDir`을 설정하려면 연결 옵션에 추가해야합니다.
 
 ```
 {
@@ -157,28 +151,24 @@ To setup `subscribersDir` you must add it in connection options:
 }
 ```
 
-Learn more about [connection options](./connection-options.md).
-If you have a multi-module project structure with multiple subscribers in different directories
-you can provide a path to the CLI command where you want to generate a subscriber:
+[연결 옵션](./connection-options.md)에 대해 자세히 알아보세요. 다른 디렉토리에 여러 구독자가 있는 다중 모듈 프로젝트 구조가 있는 경우 구독자를 생성할 CLI 명령에 대한 경로를 제공할 수 있습니다.
 
- 
+
 ```
 typeorm subscriber:create -n UserSubscriber -d src/user/subscriber
 ```
 
-Learn more about [Subscribers](./listeners-and-subscribers.md).
+[구독자](./listeners-and-subscribers.md)에 대해 자세히 알아보세요.
 
-## Create a new migration
+## 새 마이그레이션 만들기
 
-You can create a new migration using CLI:
+CLI를 사용하여 새 마이그레이션을 생성할 수 있습니다.
 
 ```
 typeorm migration:create -n UserMigration
 ```
 
-where `UserMigration` is a migration file and class name. 
-Running the command will create a new empty migration in the `migrationsDir` of the project.
-To setup `migrationsDir` you must add it in connection options:
+여기서 `UserMigration`은 마이그레이션 파일 및 클래스 이름입니다. 명령을 실행하면 프로젝트의 `migrationsDir`에 비어있는 새 마이그레이션이 생성됩니다. `migrationsDir`을 설정하려면 연결 옵션에 추가해야합니다.
 
 ```
 {
@@ -188,115 +178,112 @@ To setup `migrationsDir` you must add it in connection options:
 }
 ```
 
-Learn more about [connection options](./connection-options.md).
-If you have a multi-module project structure with multiple migrations in different directories
-you can provide a path to the CLI command where you want to generate a migration:
+[연결 옵션](./connection-options.md)에 대해 자세히 알아보세요. 여러 디렉터리에 여러 마이그레이션이 있는 다중모듈 프로젝트 구조가 있는 경우 마이그레이션을 생성하려는 CLI 명령에 대한 경로를 제공할 수 있습니다.
 
 ```
 typeorm migration:create -n UserMigration -d src/user/migration
 ```
 
-Learn more about [Migrations](./migrations.md).
+[마이그레이션](./migrations.md)에 대해 자세히 알아보세요.
 
-## Generate a migration from existing table schema
+## 기존 테이블 스키마에서 마이그레이션 생성
 
-Automatic migration generation creates a new migration file
-and writes all sql queries that must be executed to update the database.
+자동 마이그레이션 생성은 새 마이그레이션 파일을 만들고 데이터베이스를 업데이트하기 위해 실행해야하는 모든 SQL 쿼리를 작성합니다.
 
-If no there were no changes generated, the command will exit with code 1.
+생성된 변경 사항이 없으면 명령이 코드 1로 종료됩니다.
 
 ```
 typeorm migration:generate -n UserMigration
 ```
 
-The rule of thumb is to generate a migration after each entity change.
+경험상 각 엔터티 변경 후 마이그레이션을 생성하는 것이 좋습니다.
 
-Learn more about [Migrations](./migrations.md).
+[마이그레이션](./migrations.md)에 대해 자세히 알아보세요.
 
-## Run migrations
+## 마이그레이션 실행
 
-To execute all pending migrations use following command:
+보류중인 모든 마이그레이션을 실행하려면 다음 명령을 사용하십시오.
 
 ```
 typeorm migration:run
 ```
 
-Learn more about [Migrations](./migrations.md).
+[마이그레이션](./migrations.md)에 대해 자세히 알아보세요.
 
 ## Revert migrations
 
-To revert the most recently executed migration use the following command:
+가장 최근에 실행된 마이그레이션을 되돌리려면 다음 명령을 사용하십시오.
 
 ```
 typeorm migration:revert
 ```
 
-This command will undo only the last executed migration.
-You can execute this command multiple times to revert multiple migrations.
-Learn more about [Migrations](./migrations.md).
+이 명령은 마지막으로 실행된 마이그레이션만 실행 취소합니다.
+이 명령을 여러번 실행하여 여러 마이그레이션을 되돌릴 수 있습니다.
 
-## Show migrations
-To show all migrations and whether they've been run or not use following command:
+[마이그레이션](./migrations.md)에 대해 자세히 알아보세요.
+
+## 마이그레이션 표시
+
+모든 마이그레이션 및 실행 여부를 표시하려면 다음 명령을 사용하십시오.
 
 ```
 typeorm migration:show
 ```
 
-[X] = Migration has been ran
+[X] = 마이그레이션이 실행되었습니다.
 
-[ ] = Migration is pending/unapplied
+[ ] = 마이그레이션이 보류중 / 적용되지 않음
 
-This command also returns an error code if there are unapplied migrations.
+이 명령은 적용되지 않은 마이그레이션이 있는 경우에도 오류 코드를 반환합니다.
 
-## Sync database schema
+## 데이터베이스 스키마 동기화
 
-To synchronize a database schema use:
+데이터베이스 스키마를 동기화하려면 다음을 사용하십시오.
+
 ```
 typeorm schema:sync
 ```
 
-Be careful running this command in production - 
-schema sync may cause data loss if you don't use it wisely.
-Check which sql queries it will run before running on production.
+프로덕션에서이 명령을 실행하는데 주의하십시오. 현명하게 사용하지 않으면 스키마 동기화로 인해 데이터가 손실될 수 있습니다. 프로덕션에서 실행하기 전에 실행할 SQL 쿼리를 확인하십시오.
 
-## Log sync database schema queries without actual running them
+## 실제로 실행하지 않고 동기화 데이터베이스 스키마 쿼리 기록
 
-To check what sql queries `schema:sync` is going to run use:
+`schema: sync`가 실행할 SQL 쿼리를 확인하려면 다음을 사용하십시오.
 
 ```
 typeorm schema:log
 ```
 
-## Drop database schema
+## 데이터베이스 스키마 삭제
 
-To completely drop a database schema use:
+데이터베이스 스키마를 완전히 삭제하려면 다음을 사용하십시오.
 
 ```
 typeorm schema:drop
 ```
 
-Be careful with this command on production since it completely removes data from your database.
+이 명령은 데이터베이스에서 데이터를 완전히 제거하므로 프로덕션에서 주의하십시오.
 
-## Run any sql query
+## SQL 쿼리 실행
 
-You can execute any sql query you want directly in the database using:
+다음을 사용하여 데이터베이스에서 직접 원하는 SQL 쿼리를 실행할 수 있습니다.
 
 ```
 typeorm query "SELECT * FROM USERS"
 ```
 
-## Clear cache
+## 캐시 지우기
 
-If you are using `QueryBuilder` caching, sometimes you may want to clear everything stored in the cache. 
-You can do it using the following command:
+`QueryBuilder` 캐싱을 사용하는 경우 때때로 캐시에 저장된 모든 항목을 지우고 싶을 수 있습니다. 다음 명령을 사용하여 수행할 수 있습니다.
 
 ```
 typeorm cache:clear
 ```
 
-## Check version
+## 버전 확인
 
-You can check what typeorm version you have installed (both local and global) by running:
+다음을 실행하여 설치한 typeorm 버전(로컬 및 글로벌 모두)을 확인할 수 있습니다.
 
 ```
 typeorm version

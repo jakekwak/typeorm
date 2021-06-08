@@ -1,14 +1,14 @@
-# Logging
+# 로깅
 
-* [Enabling logging](#enabling-logging)
-* [Logging options](#logging-options)
-* [Log long-running queries](#log-long-running-queries)
-* [Changing default logger](#changing-default-logger)
-* [Using custom logger](#using-custom-logger)
+- [로깅 활성화](#로깅-활성화)
+- [로깅 옵션](#로깅-옵션)
+- [장기 실행 쿼리 기록](#장기-실행-쿼리-기록)
+- [기본 로거 변경](#기본-로거-변경)
+- [사용자 정의 로거 사용](#사용자-정의-로거-사용)
 
-## Enabling logging
+## 로깅 활성화
 
-You can enable logging of all queries and errors by simply setting `logging: true` in your connection options:
+연결 옵션에서 `logging: true`를 설정하기 만하면 모든 쿼리 및 오류의 로깅을 활성화할 수 있습니다.
 
 ```typescript
 {
@@ -24,19 +24,19 @@ You can enable logging of all queries and errors by simply setting `logging: tru
 }
 ```
 
-## Logging options
+## 로깅 옵션
 
-You can enable different types of logging in connection options:
+연결 옵션에서 다양한 유형의 로그인을 활성화 할 수 있습니다.
 
 ```typescript
-{ 
+{
     host: "localhost",
     ...
     logging: ["query", "error"]
 }
 ```
 
-If you want to enable logging of failed queries only then only add `error`:
+실패한 쿼리의 로깅만 활성화하려면`error` 만 추가하십시오.
 
 ```typescript
 {
@@ -46,17 +46,16 @@ If you want to enable logging of failed queries only then only add `error`:
 }
 ```
 
-There are other options you can use:
+사용할 수 있는 다른 옵션이 있습니다.
 
-* `query` - logs all queries.
-* `error` - logs all failed queries and errors.
-* `schema` - logs the schema build process.
-* `warn` - logs internal orm warnings.
-* `info` - logs internal orm informative messages.
-* `log` - logs internal orm log messages.
+* `query` - 모든 쿼리를 기록합니다.
+* `error` - 실패한 모든 쿼리 및 오류를 기록합니다.
+* `schema` - 스키마 빌드 프로세스를 기록합니다.
+* `warn` - 내부 orm 경고를 기록합니다.
+* `info` - 내부 orm 정보 메시지를 기록합니다.
+* `log` - 내부 orm 로그 메시지를 기록합니다.
 
-You can specify as many options as needed. 
-If you want to enable all logging you can simply specify `logging: "all"`:
+필요한만큼 옵션을 지정할 수 있습니다. 모든 로깅을 활성화하려면 간단히 `logging: "all"`을 지정하면됩니다.
 
 ```typescript
 {
@@ -66,10 +65,9 @@ If you want to enable all logging you can simply specify `logging: "all"`:
 }
 ```
 
-## Log long-running queries
+## 장기 실행 쿼리 기록
 
-If you have performance issues, you can log queries that take too much time to execute
-by setting `maxQueryExecutionTime` in connection options:
+성능 문제가 있는 경우 연결 옵션에서 `maxQueryExecutionTime`을 설정하여 실행하는데 너무 많은 시간이 걸리는 쿼리를 기록 할 수 있습니다.
 
 ```typescript
 {
@@ -79,20 +77,18 @@ by setting `maxQueryExecutionTime` in connection options:
 }
 ```
 
-This code will log all queries which run more then `1 second`.
+이 코드는 `1 초`이상 실행되는 모든 쿼리를 기록합니다.
 
-## Changing default logger
+## 기본 로거 변경
 
-TypeORM ships with 4 different types of logger:
+TypeORM은 4가지 유형의 로거와 함께 제공됩니다.
 
-* `advanced-console` - this is the default logger which logs all messages into the console using color 
-and sql syntax highlighting (using [chalk](https://github.com/chalk/chalk)).
-* `simple-console` - this is a simple console logger which is exactly the same as the advanced logger, but it does not use any color highlighting.
-This logger can be used if you have problems / or don't like colorized logs.
-* `file` - this logger writes all logs into `ormlogs.log` in the root folder of your project (near `package.json` and `ormconfig.json`).
-* `debug` - this logger uses [debug package](https://github.com/visionmedia/debug), to turn on logging set your env variable `DEBUG=typeorm:*` (note logging option has no effect on this logger).
+* `advanced-console` - 이것은 색상 및 SQL 구문 강조([chalk](https://github.com/chalk/chalk) 사용)를 사용하여 모든 메시지를 콘솔에 기록하는 기본 로거입니다.
+* `simple-console` - 이것은 고급 로거와 똑같은 간단한 콘솔 로거이지만 색상 강조 표시를 사용하지 않습니다. 이 로거는 문제가 있거나 색이 지정된 로그가 마음에 들지 않을 때 사용할 수 있습니다.
+* `file` - 이 로거는 모든 로그를 프로젝트의 루트 폴더(`package.json` 및 `ormconfig.json` 근처)에 있는 `ormlogs.log`에 기록합니다.
+* `debug` - 이 로거는 [debug package](https://github.com/visionmedia/debug)를 사용하여 로깅을 설정하고 env 변수 `DEBUG=typeorm:*`을 설정합니다 (로거 로깅 옵션은 이 로거에 영향을 주지 않음).
 
-You can enable any of them in connection options:
+연결 옵션에서 이들 중 하나를 활성화할 수 있습니다.
 
 ```typescript
 {
@@ -103,21 +99,21 @@ You can enable any of them in connection options:
 }
 ```
 
-## Using custom logger
+## 사용자 정의 로거 사용
 
-You can create your own logger class by implementing the `Logger` interface:
+`Logger` 인터페이스를 구현하여 고유한 로거 클래스를 만들 수 있습니다.
 
 ```typescript
 import {Logger} from "typeorm";
 
 export class MyCustomLogger implements Logger {
-    
-    // implement all methods from logger class
-    
+
+    // 로거 클래스의 모든 메소드 구현
+
 }
 ```
 
-And specify it in connection options:
+연결 옵션에서 지정하십시오.
 
 ```typescript
 import {createConnection} from "typeorm";
@@ -135,16 +131,14 @@ createConnection({
 });
 ```
 
-If you defined your connection options in the `ormconfig` file,
-then you can use it and override it in the following way:
+`ormconfig` 파일에서 연결 옵션을 정의한 경우 이를 사용하고 다음과 같은 방법으로 재정의할 수 있습니다.
 
 ```typescript
 import {createConnection, getConnectionOptions} from "typeorm";
 import {MyCustomLogger} from "./logger/MyCustomLogger";
 
-// getConnectionOptions will read options from your ormconfig file
-// and return it in connectionOptions object
-// then you can simply append additional properties to it
+// getConnectionOptions는 ormconfig 파일에서 옵션을 읽고
+// connectionOptions 객체에 반환한 다음 추가 속성을 추가할 수 있습니다.
 getConnectionOptions().then(connectionOptions => {
     return createConnection(Object.assign(connectionOptions, {
         logger: new MyCustomLogger()
@@ -152,14 +146,13 @@ getConnectionOptions().then(connectionOptions => {
 });
 ```
 
-Logger methods can accept `QueryRunner` when it's available. It's helpful if you want to log additional data.
-Also, via query runner, you can get access to additional data passed during persist/remove. For example:
+로거 메서드는 사용 가능한 경우 `QueryRunner`를 허용할 수 있습니다. 추가 데이터를 기록하려는 경우 유용합니다. 또한 쿼리 실행기를 통해 지속 / 제거중에 전달된 추가 데이터에 액세스할 수 있습니다. 예를 들면:
 
 ```typescript
-// user sends request during entity save
+// 사용자가 엔티티 저장 중에 요청을 보냅니다.
 postRepository.save(post, { data: { request: request } });
 
-// in logger you can access it this way:
+// 로거에서 다음과 같이 액세스 할 수 있습니다.
 logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
     const requestUrl = queryRunner && queryRunner.data["request"] ? "(" + queryRunner.data["request"].url + ") " : "";
     console.log(requestUrl + "executing query: " + query);

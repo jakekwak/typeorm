@@ -1,34 +1,31 @@
 # Using Configuration Sources
 
-  - [Creating a new connection from the configuration file](#creating-a-new-connection-from-the-configuration-file)
-  - [Using `ormconfig.json`](#using-ormconfigjson)
-  - [Using `ormconfig.js`](#using-ormconfigjs)
-  - [Using environment variables](#using-environment-variables)
-  - [Using `ormconfig.yml`](#using-ormconfigyml)
-  - [Using `ormconfig.xml`](#using-ormconfigxml)
-  - [Overriding options defined in ormconfig](#overriding-options-defined-in-ormconfig)
+- [구성 파일에서 새 연결 만들기](#구성-파일에서-새-연결-만들기)
+- [`ormconfig.json` 사용](#ormconfigjson-사용)
+- [`ormconfig.js` 사용](#ormconfigjs-사용)
+- [환경 변수 사용](#환경-변수-사용)
+- [`ormconfig.yml` 사용](#ormconfigyml-사용)
+- [`ormconfig.xml` 사용](#ormconfigxml-사용)
+- [Typeorm에서 사용하는 구성 파일](#typeorm에서-사용하는-구성-파일)
+- [ormconfig에 정의된 옵션 재정의](#ormconfig에-정의된-옵션-재정의)
 
-## Creating a new connection from the configuration file
+## 구성 파일에서 새 연결 만들기
 
-Most of the times you want to store your connection options in a separate configuration file.
-It makes it convenient and easy to manage.
-TypeORM supports multiple configuration sources.
-You only need to create a `ormconfig.[format]` file in the root directory of your application (near `package.json`),
-put your configuration there and in your app call `createConnection()` without any configuration passed:
+대부분의 경우 연결 옵션을 별도의 구성 파일에 저장하려고 합니다. 편리하고 쉽게 관리할 수 있습니다. TypeORM은 여러 구성 소스를 지원합니다. 애플리케이션의 루트 디렉토리(`package.json` 근처)에 `ormconfig.[format]` 파일을 만들고 구성을 배치한 다음 앱에서 구성을 전달하지 않고 `createConnection()`을 호출하기만하면 됩니다.
 
 ```typescript
 import {createConnection} from "typeorm";
 
-// createConnection method will automatically read connection options
-// from your ormconfig file or environment variables
+// createConnection 메소드는 ormconfig 파일 또는
+// 환경 변수에서 연결 옵션을 자동으로 읽습니다.
 const connection = await createConnection();
 ```
 
-Supported ormconfig file formats are: `.json`, `.js`, `.ts`, `.env`, `.yml` and `.xml`.
+지원되는 ormconfig 파일 형식은 다음과 같습니다: `.json`, `.js`, `.ts`, `.env`, `.yml` and `.xml`.
 
-## Using `ormconfig.json`
+## `ormconfig.json` 사용
 
-Create `ormconfig.json` in the project root (near `package.json`). It should have the following content:
+프로젝트 루트(`package.json` 근처)에 `ormconfig.json`을 만듭니다. 다음 내용이 있어야 합니다.
 
 ```json
 {
@@ -41,9 +38,9 @@ Create `ormconfig.json` in the project root (near `package.json`). It should hav
 }
 ```
 
-You can specify any other options from [ConnectionOptions](./connection-options.md).
+[ConnectionOptions](./connection-options.md)에서 다른 옵션을 지정할 수 있습니다.
 
-If you want to create multiple connections then simply create multiple connections in a single array:
+여러 연결을 생성하려면 단일 배열에 여러 연결을 생성하면됩니다.
 
 ```json
 [{
@@ -65,9 +62,9 @@ If you want to create multiple connections then simply create multiple connectio
 }]
 ```
 
-## Using `ormconfig.js`
+## `ormconfig.js` 사용
 
-Create `ormconfig.js` in the project root (near `package.json`). It should have following content:
+프로젝트 루트(`package.json` 근처)에 `ormconfig.js`를 만듭니다. 다음 내용이 있어야 합니다.
 
 ```javascript
 module.exports = {
@@ -80,7 +77,7 @@ module.exports = {
 }
 ```
 
-Alternatively, you may use the ECMAScript module format if your environment supports it:
+또는 환경에서 지원하는 경우 ECMAScript 모듈 형식을 사용할 수 있습니다.
 
 ```javascript
 export default {
@@ -93,12 +90,12 @@ export default {
 }
 ```
 
-You can specify any other options from [ConnectionOptions](./connection-options.md).
-If you want to create multiple connections then simply create multiple connections in a single array and return it.
+[ConnectionOptions](./connection-options.md)에서 다른 옵션을 지정할 수 있습니다.
+여러 연결을 만들려면 단일 배열에 여러 연결을 만들고 반환하면 됩니다.
 
-## Using environment variables
+## 환경 변수 사용
 
-Create `.env` or `ormconfig.env` in the project root (near `package.json`). It should have the following content:
+프로젝트 루트(`package.json` 근처)에 `.env` 또는 `ormconfig.env`를 만듭니다. 다음 내용이 있어야 합니다.
 
 ```ini
 TYPEORM_CONNECTION = mysql
@@ -112,7 +109,7 @@ TYPEORM_LOGGING = true
 TYPEORM_ENTITIES = entity/*.js,modules/**/entity/*.js
 ```
 
-List of available env variables you can set:
+설정할 수 있는 사용 가능한 환경변수 목록 :
 
 * TYPEORM_CACHE
 * TYPEORM_CACHE_ALWAYS_ENABLED
@@ -145,31 +142,30 @@ List of available env variables you can set:
 * TYPEORM_USERNAME
 * TYPEORM_UUID_EXTENSION
 
-`TYPEORM_CACHE` should be boolean or string of cache type
+`TYPEORM_CACHE`는 부울 또는 캐시 타입의 문자열이어야 합니다.
 
-`ormconfig.env` should be used only during development.
-On production you can set all these values in real ENVIRONMENT VARIABLES.
+`ormconfig.env`는 개발중에만 사용해야합니다. 프로덕션에서 이러한 모든 값을 실제 환경변수로 설정할 수 있습니다.
 
-You cannot define multiple connections using an `env` file or environment variables.
-If your app has multiple connections then use alternative configuration storage format.
+`env` 파일 또는 환경변수를 사용하여 여러 연결을 정의할 수 없습니다. 앱에 여러 연결이 있는 경우 대체 구성 저장소 형식을 사용합니다.
 
-If you need to pass a driver-specific option, e.g. `charset` for MySQL, you could use the `TYPEORM_DRIVER_EXTRA` variable in JSON format, e.g.
+드라이버별 옵션을 전달해야하는 경우(예: MySQL의 경우 `charset`의 경우 JSON 형식의 `TYPEORM_DRIVER_EXTRA` 변수를 사용할 수 있습니다.
+
 ```
 TYPEORM_DRIVER_EXTRA='{"charset": "utf8mb4"}'
 ```
-## Using `ormconfig.yml`
+## `ormconfig.yml` 사용
 
-Create `ormconfig.yml` in the project root (near `package.json`). It should have the following content:
+프로젝트 루트(`package.json` 근처)에 `ormconfig.yml`을 만듭니다. 다음 내용이 있어야 합니다.
 
 ```yaml
-default: # default connection
+default: # 기본 연결
     host: "localhost"
     port: 3306
     username: "test"
     password: "test"
     database: "test"
 
-second-connection: # other connection
+second-connection: # 다른 연결
     host: "localhost"
     port: 3306
     username: "test"
@@ -177,11 +173,11 @@ second-connection: # other connection
     database: "test2"
 ```
 
-You can use any connection options available.
+사용 가능한 모든 연결 옵션을 사용할 수 있습니다.
 
-## Using `ormconfig.xml`
+## `ormconfig.xml` 사용
 
-Create `ormconfig.xml` in the project root (near `package.json`). It should have the following content:
+프로젝트 루트(`package.json` 근처)에 `ormconfig.xml`을 만듭니다. 다음 내용이 있어야 합니다.
 
 ```xml
 <connections>
@@ -204,39 +200,33 @@ Create `ormconfig.xml` in the project root (near `package.json`). It should have
 </connections>
 ```
 
-You can use any connection options available.
+사용 가능한 모든 연결 옵션을 사용할 수 있습니다.
 
-## Which configuration file is used by Typeorm
+## Typeorm에서 사용하는 구성 파일
 
-Sometimes, you may want to use multiple configurations using different formats. When calling `getConnectionOptions()`
-or attempting to use `createConnection()` without the connection options, Typeorm will attempt to load the configurations,
-in this order:
+경우에 따라 다른 형식을 사용하여 여러 구성을 사용할 수 있습니다. `getConnectionOptions()`를 호출하거나 연결 옵션없이 `createConnection()`을 사용하려고하면 Typeorm은 다음 순서로 구성 로드를 시도합니다.
 
-1. From the environment variables. Typeorm will attempt to load the `.env` file using dotEnv if it exists. If the environment
-variables `TYPEORM_CONNECTION` or `TYPEORM_URL` are set, Typeorm will use this method.
-2. From the `ormconfig.env`.
-3. From the other `ormconfig.[format]` files, in this order: `[js, ts, json, yml, yaml, xml]`.
+1. 환경변수에서. Typeorm은 dotEnv를 사용하여 `.env` 파일을 로드하려고 시도합니다. 환경 변수 `TYPEORM_CONNECTION` 또는 `TYPEORM_URL`이 설정된 경우 Typeorm은 이 메서드를 사용합니다.
+2. `ormconfig.env`에서.
+3. 다른 `ormconfig.[format]` 파일에서 순서대로 `[js, ts, json, yml, yaml, xml]`.
 
-Note that Typeorm will use the first valid method found and will not load the others. For example, Typeorm will not load the
-`ormconfig.[format]` files if the configuration was found in the environment.
+Typeorm은 발견된 첫번째 유효한 메서드를 사용하고 다른 메서드는 로드하지 않습니다. 예를 들어 Typeorm은 환경에서 구성이 발견된 경우 `ormconfig.[format]` 파일을 로드하지 않습니다.
 
-## Overriding options defined in ormconfig
+## ormconfig에 정의된 옵션 재정의
 
-Sometimes you want to override values defined in your ormconfig file,
-or you might want to append some TypeScript / JavaScript logic to your configuration.
+때때로 ormconfig 파일에 정의된 값을 재정의하거나 구성에 TypeScript/JavaScript 로직을 추가할 수 있습니다.
 
-In such cases you can load options from ormconfig and get `ConnectionOptions` built,
-then you can do whatever you want with those options, before passing them to `createConnection` function:
+이러한 경우 ormconfig에서 옵션을 로드하고 `ConnectionOptions`를 빌드한 다음 `createConnection` 함수에 전달하기 전에 해당 옵션으로 원하는 모든 작업을 수행할 수 있습니다.
 
 
 ```typescript
-// read connection options from ormconfig file (or ENV variables)
+// ormconfig 파일(또는 ENV 변수)에서 연결 옵션 읽기
 const connectionOptions = await getConnectionOptions();
 
-// do something with connectionOptions,
-// for example append a custom naming strategy or a custom logger
+// connectionOptions로 작업을 수행합니다.
+// 예를 들어 사용자 지정 명명 전략 또는 사용자 지정 로거 추가
 Object.assign(connectionOptions, { namingStrategy: new MyNamingStrategy() });
 
-// create a connection using modified connection options
+// 수정된 연결 옵션을 사용하여 연결 생성
 const connection = await createConnection(connectionOptions);
 ```

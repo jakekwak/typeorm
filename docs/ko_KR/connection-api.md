@@ -1,13 +1,12 @@
 # Connection APIs
 
-* [Main API](#main-api)
-* [`Connection` API](#connection-api)
-* [`ConnectionManager` API](#connectionmanager-api)
+- [메인 API](#메인-api)
+- [`Connection` API](#connection-api)
+- [`ConnectionManager` API](#connectionmanager-api)
 
-## Main API
+## 메인 API
 
-* `createConnection()` - Creates a new connection and registers it in global connection manager.
-If connection options parameter is omitted then connection options are read from `ormconfig` file or environment variables.
+* `createConnection()` - 새 연결을 만들고 글로벌 연결 관리자에 등록합니다. 연결 옵션 매개 변수가 생략되면 `ormconfig` 파일 또는 환경 변수에서 연결 옵션을 읽습니다.
 
 ```typescript
 import {createConnection} from "typeorm";
@@ -22,8 +21,7 @@ const connection = await createConnection({
 });
 ```
 
-* `createConnections()` - Creates multiple connections and registers them in global connection manager.
-If connection options parameter is omitted then connection options are read from `ormconfig` file or environment variables.
+* `createConnections()` - 여러 연결을 만들고 글로벌 연결 관리자에 등록합니다. 연결 옵션 매개변수가 생략되면 `ormconfig` 파일 또는 환경 변수에서 연결 옵션을 읽습니다.
 
 ```typescript
 import {createConnections} from "typeorm";
@@ -47,7 +45,7 @@ const connection = await createConnections([{
 }]);
 ```
 
-* `getConnectionManager()` - Gets connection manager which stores all created (using `createConnection()` or `createConnections()`) connections.
+* `getConnectionManager()` - 생성된 모든 연결(`createConnection()` 또는 `createConnections()` 사용)을 저장하는 연결 관리자를 가져옵니다.
 
 ```typescript
 import {getConnectionManager} from "typeorm";
@@ -56,7 +54,7 @@ const defaultConnection = getConnectionManager().get("default");
 const secondaryConnection = getConnectionManager().get("secondary");
 ```
 
-* `getConnection()` - Gets connection which was created by using `createConnection` method.
+* `getConnection()` - `createConnection` 메소드를 사용하여 생성된 연결을 가져옵니다.
 
 ```typescript
 import {getConnection} from "typeorm";
@@ -66,226 +64,201 @@ const connection = getConnection();
 const secondaryConnection = getConnection("secondary-connection");
 ```
 
-* `getEntityManager()` - Gets `EntityManager` from connection. 
-Connection name can be specified to indicate what connection's entity manager should be taken.
+* `getEntityManager()` - 연결에서 `EntityManager`를 가져옵니다. 어떤 연결의 엔티티 관리자를 가져와야하는지 나타내기 위해 연결 이름을 지정할 수 있습니다.
 
 ```typescript
 import {getEntityManager} from "typeorm";
 
 const manager = getEntityManager();
-// you can use manager methods now
+// 이제 관리자 방법을 사용할 수 있습니다.
 
 const secondaryManager = getEntityManager("secondary-connection");
-// you can use secondary connection manager methods
+// 보조 연결 관리자 방법을 사용할 수 있습니다.
 ```
 
-* `getRepository()` - Gets `Repository` for given entity from connection. 
-Connection name can be specified to indicate what connection's entity manager should be taken.
+* `getRepository()` - 연결에서 주어진 엔티티에 대한 `Repository`를 가져옵니다. 어떤 연결의 엔티티 관리자를 가져와야하는지 나타내기 위해 연결 이름을 지정할 수 있습니다.
 
 ```typescript
 import {getRepository} from "typeorm";
 
 const userRepository = getRepository(User);
-// you can use repository methods now
+// 이제 저장소 메소드를 사용할 수 있습니다.
 
 const blogRepository = getRepository(Blog, "secondary-connection");
-// you can use secondary connection repository methods
+// 보조 연결 저장소 방법을 사용할 수 있습니다.
 ```
 
-* `getTreeRepository()` - Gets `TreeRepository` for given entity from connection. 
-Connection name can be specified to indicate what connection's entity manager should be taken.
+* `getTreeRepository()` - 연결에서 주어진 엔티티에 대한 `TreeRepository`를 가져옵니다. 어떤 연결의 엔티티 관리자를 가져와야하는지 나타내기 위해 연결 이름을 지정할 수 있습니다.
 
 ```typescript
 import {getTreeRepository} from "typeorm";
 
 const userRepository = getTreeRepository(User);
-// you can use repository methods now
+// 이제 저장소 메소드를 사용할 수 있습니다.
 
 const blogRepository = getTreeRepository(Blog, "secondary-connection");
-// you can use secondary connection repository methods
+// 보조 연결 저장소 방법을 사용할 수 있습니다.
 ```
 
-* `getMongoRepository()` - Gets `MongoRepository` for given entity from connection. 
-Connection name can be specified to indicate what connection's entity manager should be taken.
+* `getMongoRepository()` - 연결에서 주어진 엔티티에 대한`MongoRepository`를 가져옵니다. 어떤 연결의 엔티티 관리자를 가져와야하는지 나타내기 위해 연결 이름을 지정할 수 있습니다.
 
 ```typescript
 import {getMongoRepository} from "typeorm";
 
 const userRepository = getMongoRepository(User);
-// you can use repository methods now
+// 이제 저장소 메소드를 사용할 수 있습니다.
 
 const blogRepository = getMongoRepository(Blog, "secondary-connection");
-// you can use secondary connection repository methods
+// 보조 연결 저장소 방법을 사용할 수 있습니다.
 ```
 
 ## `Connection` API
 
-* `name` - Connection name. If you created nameless connection then it's equal to "default".
-You use this name when you work with multiple connections and call `getConnection(connectionName: string)`
+* `name` - 연결 이름. 이름없는 연결을 만든 경우 "기본값"과 같습니다. 여러 연결로 작업하고 `getConnection(connectionName : string)`을 호출할 때 이 이름을 사용합니다.
 
 ```typescript
 const connectionName: string = connection.name;
 ```
 
-* `options` - Connection options used to create this connection.
-Learn more about [Connection Options](./connection-options.md).
+* `options` - 이 연결을 만드는 데 사용되는 연결 옵션입니다. [연결 옵션](./connection-options.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const connectionOptions: ConnectionOptions = connection.options;
-// you can cast connectionOptions to MysqlConnectionOptions
-// or any other xxxConnectionOptions depending on the database driver you use
+// 사용하는 데이터베이스 드라이버에 따라 connectionOptions를 MysqlConnectionOptions
+// 또는 다른 xxxConnectionOptions로 캐스팅할 수 있습니다.
 ```
 
-* `isConnected` - Indicates if a real connection to the database is established.
+* `isConnected` - 데이터베이스에 대한 실제 연결이 설정되었는지 여부를 나타냅니다.
 
 ```typescript
 const isConnected: boolean = connection.isConnected;
 ```
 
-* `driver` - Underlying database driver used in this connection.
+* `driver` - 이 연결에 사용되는 기본 데이터베이스 드라이버입니다.
 
 ```typescript
 const driver: Driver = connection.driver;
-// you can cast connectionOptions to MysqlDriver
-// or any other xxxDriver depending on the database driver you use
+// 사용하는 데이터베이스 드라이버에 따라 connectionOptions를 MysqlDriver
+// 또는 다른 xxxDriver로 캐스팅할 수 있습니다.
 ```
 
-* `manager` - `EntityManager` used to work with connection entities.
-Learn more about [Entity Manager and Repository](working-with-entity-manager.md).
+* `manager` - 연결 엔터티 작업에 사용되는 `EntityManager`. [엔티티 관리자 및 저장소](working-with-entity-manager.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const manager: EntityManager = connection.manager;
-// you can call manager methods, for example find:
+// 관리자 메소드를 호출할 수 있습니다. 예를 들어 다음을 찾을 수 있습니다.
 const user = await manager.findOne(1);
 ```
 
-* `mongoManager` - `MongoEntityManager` used to work with connection entities in mongodb connections.
-For more information about MongoEntityManager see [MongoDB](./mongodb.md) documentation.
+* `mongoManager` - `MongoEntityManager`는 mongodb 연결에서 연결 엔티티로 작업하는데 사용되었습니다. MongoEntityManager에 대한 자세한 정보는 [MongoDB](./mongodb.md) 문서를 참조하십시오.
 
 ```typescript
 const manager: MongoEntityManager = connection.mongoManager;
-// you can call manager or mongodb-manager specific methods, for example find:
+// 관리자 또는 mongodb-manager 특정 메소드를 호출할 수 있습니다. 예를 들어 다음을 찾을 수 있습니다.
 const user = await manager.findOne(1);
 ```
 
-* `connect` - Performs connection to the database. 
-When you use `createConnection` it automatically calls `connect` and you don't need to call it yourself.
+* `connect` - 데이터베이스에 대한 연결을 수행합니다. `createConnection`을 사용하면 자동으로 `connect`를 호출하므로 직접 호출할 필요가 없습니다.
 
 ```typescript
 await connection.connect();
 ```
 
-* `close` - Closes connection with the database. 
-Usually, you call this method when your application is shutting down.
+* `close` - 데이터베이스와의 연결을 닫습니다. 일반적으로 애플리케이션이 종료될 때 이 메소드를 호출합니다.
 
 ```typescript
 await connection.close();
 ```
 
-* `synchronize` - Synchronizes database schema. When `synchronize: true` is set in connection options it calls this method. 
-Usually, you call this method when your application is starting.
+* `synchronize` - 데이터베이스 스키마를 동기화합니다. 연결 옵션에 `synchronize: true`가 설정되면 이 메서드를 호출합니다. 일반적으로 응용 프로그램이 시작될 때이 메서드를 호출합니다.
 
 ```typescript
 await connection.synchronize();
 ```
 
-* `dropDatabase` - Drops the database and all its data.
-Be careful with this method on production since this method will erase all your database tables and their data.
-Can be used only after connection to the database is established.
+* `dropDatabase` - 데이터베이스와 모든 데이터를 삭제합니다. 이 방법은 모든 데이터베이스 테이블과 해당 데이터를 삭제하므로 프로덕션에서 이 방법에 주의하십시오. 데이터베이스 연결이 설정된 후에 만 사용할 수 있습니다.
 
 ```typescript
 await connection.dropDatabase();
 ```
 
-* `runMigrations` - Runs all pending migrations.
+* `runMigrations` - 보류중인 모든 마이그레이션을 실행합니다.
 
 ```typescript
 await connection.runMigrations();
 ```
 
-* `undoLastMigration` - Reverts last executed migration.
+* `undoLastMigration` - 마지막으로 실행한 마이그레이션을 되돌립니다.
 
 ```typescript
 await connection.undoLastMigration();
 ```
 
-* `hasMetadata` - Checks if metadata for a given entity is registered.
-Learn more about [Entity Metadata](./entity-metadata.md).
+* `hasMetadata` - 주어진 엔티티에 대한 메타데이터가 등록되었는지 확인합니다. [엔티티 메타데이터](./entity-metadata.md)에 대해 자세히 알아보세요.
 
 ```typescript
 if (connection.hasMetadata(User))
     const userMetadata = connection.getMetadata(User);
 ```
 
-* `getMetadata` - Gets `EntityMetadata` of the given entity.
-You can also specify a table name and if entity metadata with such table name is found it will be returned.
-Learn more about [Entity Metadata](./entity-metadata.md).
+* `getMetadata` - 주어진 엔티티의 `EntityMetadata`를 가져옵니다. 테이블 이름을 지정할 수도 있으며 이러한 테이블 이름을 가진 엔터티 메타데이터가 발견되면 반환됩니다. [엔티티 메타데이터](./entity-metadata.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const userMetadata = connection.getMetadata(User);
-// now you can get any information about User entity
+// 이제 사용자 엔티티에 대한 정보를 얻을 수 있습니다.
 ```
 
-* `getRepository` - Gets `Repository` of the given entity.
-You can also specify a table name and if repository for given table is found it will be returned.
-Learn more about [Repositories](working-with-repository.md).
+* `getRepository` - 주어진 엔티티의 `Repository`를 가져옵니다. 테이블 이름을 지정할 수도 있으며 주어진 테이블의 저장소가 발견되면 반환됩니다. [Repositories](working-with-repository.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const repository = connection.getRepository(User);
-// now you can call repository methods, for example find:
+// 이제 저장소 메소드를 호출할 수 있습니다. 예를 들면 다음과 같습니다.
 const users = await repository.findOne(1);
 ```
 
-* `getTreeRepository` - Gets `TreeRepository` of the given entity.
-You can also specify a table name and if repository for given table is found it will be returned.
-Learn more about [Repositories](working-with-repository.md).
+* `getTreeRepository` - 주어진 엔티티의 `TreeRepository`를 가져옵니다. 테이블 이름을 지정할 수도 있으며 주어진 테이블의 저장소가 발견되면 반환됩니다. [Repositories](working-with-repository.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const repository = connection.getTreeRepository(Category);
-// now you can call tree repository methods, for example findTrees:
+// 이제 트리 저장소 메소드(예: findTrees)를 호출 할 수 있습니다.
 const categories = await repository.findTrees();
 ```
 
-* `getMongoRepository` - Gets `MongoRepository` of the given entity.
-This repository is used for entities in MongoDB connection.
-Learn more about [MongoDB support](./mongodb.md).
+* `getMongoRepository` - 주어진 엔티티의 `MongoRepository`를 가져옵니다. 이 저장소는 MongoDB 연결의 엔티티에 사용됩니다. [MongoDB 지원](./mongodb.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const repository = connection.getMongoRepository(User);
-// now you can call mongodb-specific repository methods, for example createEntityCursor:
+// 이제 mongodb 특정 저장소 메소드(예: createEntityCursor)를 호출할 수 있습니다.
 const categoryCursor = repository.createEntityCursor();
 const category1 = await categoryCursor.next();
 const category2 = await categoryCursor.next();
 ```
 
-* `getCustomRepository` - Gets custom defined repository.
-Learn more about [custom repositories](custom-repository.md).
+* `getCustomRepository` - 사용자 정의 저장소를 가져옵니다. [커스텀 리포지토리](./custom-repository.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const userRepository = connection.getCustomRepository(UserRepository);
-// now you can call methods inside your custom repository - UserRepository class
+// 이제 사용자 정의 저장소 - UserRepository 클래스 내에서 메소드를 호출할 수 있습니다.
 const crazyUsers = await userRepository.findCrazyUsers();
 ```
 
-* `transaction` - Provides a single transaction where multiple database requests will be executed in a single database transaction.
-Learn more about [Transactions](./transactions.md).
+* `transaction` - 단일 데이터베이스 트랜잭션에서 여러 데이터베이스 요청이 실행되는 단일 트랜잭션을 제공합니다. [트랜잭션](./transactions.md)에 대해 자세히 알아보세요.
 
 ```typescript
 await connection.transaction(async manager => {
-    // NOTE: you must perform all database operations using given manager instance
-    // its a special instance of EntityManager working with this transaction
-    // and don't forget to await things here
+    // 참고: 주어진 관리자 인스턴스를 사용하여 모든 데이터베이스 작업을 수행해야합니다.
+    // 이 트랜잭션과 함께 작동하는 EntityManager의 특수 인스턴스는
+    // 여기에서 기다리는 것을 잊지 마십시오.
 });
 ```
 
-* `query` - Executes a raw SQL query.
+* `query` - 원시 SQL 쿼리를 실행합니다.
 
 ```typescript
 const rawData = await connection.query(`SELECT * FROM USERS`);
 ```
 
-* `createQueryBuilder` - Creates a query builder, which can be used to build queries.
-Learn more about [QueryBuilder](select-query-builder.md).
+* `createQueryBuilder` - 쿼리 작성에 사용할 수있는 쿼리 작성기를 만듭니다. [QueryBuilder](./select-query-builder.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const users = await connection.createQueryBuilder()
@@ -295,25 +268,23 @@ const users = await connection.createQueryBuilder()
     .getMany();
 ```
 
-* `createQueryRunner` - Creates a query runner used to manage and work with a single real database connection.
-Learn more about [QueryRunner](./query-runner.md). 
+* `createQueryRunner` - 단일 실제 데이터베이스 연결을 관리하고 사용하는데 사용되는 쿼리 실행기를 만듭니다. [QueryRunner](./query-runner.md)에 대해 자세히 알아보세요.
 
 ```typescript
 const queryRunner = connection.createQueryRunner();
 
-// you can use its methods only after you call connect
-// which performs real database connection
+// 실제 데이터베이스 연결을 수행하는 connect를 호출한 후에 만 메소드를 사용할 수 있습니다.
 await queryRunner.connect();
 
-// .. now you can work with query runner and call its methods
+// .. 이제 쿼리 실행기로 작업하고 해당 메서드를 호출 할 수 있습니다.
 
-// very important - don't forget to release query runner once you finished working with it
+// 매우 중요합니다. 작업을 마치면 쿼리 실행기를 릴리스하는 것을 잊지 마십시오.
 await queryRunner.release();
 ```
 
 ## `ConnectionManager` API
 
-* `create` - Creates a new connection and register it in the manager.
+* `create` - 새로운 연결을 생성하고 관리자에 등록합니다.
 
 ```typescript
 const connection = connectionManager.create({
@@ -326,14 +297,14 @@ const connection = connectionManager.create({
 });
 ```
 
-* `get` - Gets already created connection stored in the manager by its name.
+* `get` - 이름으로 관리자에 저장된 이미 생성된 연결을 가져옵니다.
 
 ```typescript
 const defaultConnection = connectionManager.get("default");
 const secondaryConnection = connectionManager.get("secondary");
 ```
 
-* `has` - Checks if a connection is registered in the given connection manager.
+* `has` - 지정된 연결 관리자에 연결이 등록되어 있는지 확인합니다.
 
 ```typescript
 if (connectionManager.has("default")) {

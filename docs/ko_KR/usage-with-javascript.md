@@ -1,7 +1,7 @@
-# Using with JavaScript
-  
-TypeORM can be used not only with TypeScript, but also with JavaScript. 
-Everything is the same, except you need to omit types and if your platform does not support ES6 classes then you need to define objects with all required metadata.
+# 자바스크립트화 함께 사용하기
+
+TypeORM은 TypeScript뿐만 아니라 JavaScript에서도 사용할 수 있습니다.
+타입을 생략하고 플랫폼이 ES6 클래스를 지원하지 않는 경우 필요한 모든 메타 데이터로 객체를 정의해야 한다는 점을 제외하면 모든 것이 동일합니다.
 
 ##### app.js
 
@@ -61,8 +61,8 @@ typeorm.createConnection({
 var EntitySchema = require("typeorm").EntitySchema;
 
 module.exports = new EntitySchema({
-    name: "Category", // Will use table name `category` as default behaviour.
-    tableName: "categories", // Optional: Provide `tableName` property to override the default behaviour for table name. 
+    name: "Category", // 테이블 이름` category`를 기본 동작으로 사용합니다.
+    tableName: "categories", // 선택 사항: 테이블 이름의 기본 동작을 재정의하려면 `tableName` 속성을 제공합니다.
     columns: {
         id: {
             primary: true,
@@ -82,8 +82,8 @@ module.exports = new EntitySchema({
 var EntitySchema = require("typeorm").EntitySchema;
 
 module.exports = new EntitySchema({
-    name: "Post", // Will use table name `post` as default behaviour.
-    tableName: "posts", // Optional: Provide `tableName` property to override the default behaviour for table name. 
+    name: "Post", // 테이블 이름 'post'를 기본 동작으로 사용합니다.
+    tableName: "posts", // 선택 사항: '테이블 이름'속성을 제공하여 테이블 이름의 기본 동작을 재정의합니다.
     columns: {
         id: {
             primary: true,
@@ -108,4 +108,4 @@ module.exports = new EntitySchema({
 });
 ```
 
-You can checkout this example [typeorm/javascript-example](https://github.com/typeorm/javascript-example) to learn more.
+자세한 내용은 이 예제 [typeorm/javascript-example](https://github.com/typeorm/javascript-example)를 확인하세요.

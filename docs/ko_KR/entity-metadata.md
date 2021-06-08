@@ -1,7 +1,7 @@
-# Entity Metadata
+# 엔티티 메타데이터
 
-Entity metadata and all related metadata classes contain information about entities,
-their columns, indices, relations and other entity-related information you can use
-to create more complex applications or extensions for TypeORM.
+엔티티 메타데이터 및 모든 관련 메타데이터 클래스에는 엔티티에 대한 정보가 포함됩니다.
+사용할 수 있는 해당 컬럼, 색인, 관계 및 기타 엔티티 관련 정보
+TypeORM에 대한 더 복잡한 애플리케이션 또는 확장을 만들 수 있습니다.
 
-TBD.
+미정.
