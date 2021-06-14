@@ -139,7 +139,7 @@ export const CategoryEntity = new EntitySchema<Category>({
 
 `Decorator` 접근방식을 사용하면 기본 컬럼을 추상 클래스로 `확장`하고 간단히 확장할 수 있습니다. 예를 들어, `id`, `createdAt` 및 `updatedAt` 컬럼은 이러한 `BaseEntity`에 정의될 수 있습니다. 자세한 내용은 [구체적인 테이블 상속](entity-inheritance.md##구체적인-테이블-상속)에 대한 문서를 참조하세요.
 
-`EntitySchema` 접근방식을 사용할 때는 불가능합니다. 그러나 `Spread Operator` (`...`)를 유리하게 사용할 수 있습니다.
+`EntitySchema` 접근방식을 사용할 때는 불가능합니다. 그러나 `Spread Operator`(`...`)를 유리하게 사용할 수 있습니다.
 
 위의 `Category` 예를 다시 생각해보세요. 기본 컬럼 설명을 `추출`하여 다른 스키마에서 재사용할 수 있습니다. 다음과 같은 방법으로 수행할 수 있습니다.
 
