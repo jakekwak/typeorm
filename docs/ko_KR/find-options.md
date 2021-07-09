@@ -409,7 +409,7 @@ SELECT * FROM "post" WHERE "currentDate" > NOW()
 import {Raw} from "typeorm";
 
 const loadedPosts = await connection.getRepository(Post).find({
-    currentDate: Raw(alias =>`${alias} > ':date'`, { date: "2020-10-06" })
+    currentDate: Raw(alias =>`${alias} > :date`, { date: "2020-10-06" })
 });
 ```
 
