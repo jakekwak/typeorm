@@ -97,7 +97,7 @@ export class User {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column(type => Name)
+    @Column(() => Name)
     name: Name;
 
     @Column()
@@ -116,7 +116,7 @@ export class Employee {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column(type => Name)
+    @Column(() => Name)
     name: Name;
 
     @Column()
@@ -135,7 +135,7 @@ export class Student {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column(type => Name)
+    @Column(() => Name)
     name: Name;
 
     @Column()
