@@ -12,19 +12,19 @@ import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
 @Entity()
 export class User {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
+
     @Column()
     firstName: string;
-    
+
     @Column()
     lastName: string;
-    
+
     @Column()
     isActive: boolean;
-    
+
 }
 ```
 
@@ -33,19 +33,19 @@ import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
 @Entity()
 export class Employee {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
+
     @Column()
     firstName: string;
-    
+
     @Column()
     lastName: string;
-    
+
     @Column()
     salary: string;
-    
+
 }
 ```
 
@@ -54,19 +54,19 @@ import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
 @Entity()
 export class Student {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
+
     @Column()
     firstName: string;
-    
+
     @Column()
     lastName: string;
-    
+
     @Column()
     faculty: string;
-    
+
 }
 ```
 
@@ -76,17 +76,17 @@ What we can do is to reduce `firstName` and `lastName` duplication by creating a
 import {Column} from "typeorm";
 
 export class Name {
-    
+
     @Column()
     first: string;
-    
+
     @Column()
     last: string;
-    
+
 }
 ```
 
-Then you can "connect" those columns in your entities: 
+Then you can "connect" those columns in your entities:
 
 ```typescript
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
@@ -94,16 +94,16 @@ import {Name} from "./Name";
 
 @Entity()
 export class User {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
-    @Column(type => Name)
+
+    @Column(() => Name)
     name: Name;
-    
+
     @Column()
     isActive: boolean;
-    
+
 }
 ```
 
@@ -113,16 +113,16 @@ import {Name} from "./Name";
 
 @Entity()
 export class Employee {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
-    @Column(type => Name)
+
+    @Column(() => Name)
     name: Name;
-    
+
     @Column()
     salary: number;
-    
+
 }
 ```
 
@@ -132,16 +132,16 @@ import {Name} from "./Name";
 
 @Entity()
 export class Student {
-    
+
     @PrimaryGeneratedColumn()
     id: string;
-    
-    @Column(type => Name)
+
+    @Column(() => Name)
     name: Name;
-    
+
     @Column()
     faculty: string;
-    
+
 }
 ```
 
@@ -179,4 +179,3 @@ All columns defined in the `Name` entity will be merged into `user`, `employee` 
 This way code duplication in the entity classes is reduced.
  You can use as many columns (or relations) in embedded classes as you need.
  You even can have nested embedded columns inside embedded classes.
- 
