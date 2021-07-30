@@ -1202,6 +1202,7 @@ TypeORM 작업을 단순화하고 다른 모듈과 통합하는 몇 가지 확�
 * 기존 데이터베이스에서 모델 생성 - [typeorm-model-generator](https://github.com/Kononnable/typeorm-model-generator)
 * 픽스쳐 로더 - [typeorm-fixtures-cli](https://github.com/RobinCK/typeorm-fixtures)
 * ER 다이어그램 생성기 - [typeorm-uml](https://github.com/eugene-manuilov/typeorm-uml/)
+* Create/Drop database - [typeorm-extension](https://github.com/Tada5hi/typeorm-extension)
 
 ## 기여하기
 
